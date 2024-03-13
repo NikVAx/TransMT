@@ -8,4 +8,5 @@ public class Construction : IEntity<string>
     public string Id { get; set; }
 
     public GeoPoint Location { get; set; }
+    public string Address { get; set; }
 }

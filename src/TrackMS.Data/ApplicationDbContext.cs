@@ -27,6 +27,12 @@ public class ApplicationDbContext : DbContext
             x.ComplexProperty(y => y.Location);
         });
 
+        modelBuilder
+            .Entity<Construction>()
+            .HasMany<Vehicle>()
+            .WithOne()
+            .HasForeignKey(x => x.StorageAreaId);
+
         base.OnModelCreating(modelBuilder);
     }
 }
