@@ -1,6 +1,9 @@
 
 using Microsoft.EntityFrameworkCore;
 using TrackMS.Data;
+using TrackMS.Domain.Abstractions;
+using TrackMS.Domain.Entities;
+using TrackMS.WebAPI.Services;
 
 namespace TrackMS.WebAPI;
 
@@ -16,6 +19,11 @@ public class Program
         {
             options.UseNpgsql(connectionString);    
         });
+
+        builder.Services.AddScoped<ICrudService<Construction, string>, EfCrudService<Construction, string>>();
+        builder.Services.AddScoped<ICrudService<GeoZone, string>, EfCrudService<GeoZone, string>>();
+        builder.Services.AddScoped<ICrudService<Vehicle, string>, EfCrudService<Vehicle, string>>();
+        builder.Services.AddScoped<ICrudService<VehicleOperator, string>, EfCrudService<VehicleOperator, string>>();
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
