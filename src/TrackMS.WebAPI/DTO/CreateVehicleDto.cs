@@ -1,9 +1,8 @@
-﻿namespace TrackMS.WebAPI.DTO
+﻿namespace TrackMS.WebAPI.DTO;
+
+public class CreateVehicleDto
 {
-    public class CreateVehicleDto
-    {
-        public string? Type { get; set; }
-        public string? OperatingStatus { get; set; }
-        public string? StorageAreaId { get; set; }
-    }
+    public string? Type { get; set; }
+    public string? OperatingStatus { get; set; }
+    public string? StorageAreaId { get; set; }
 }
