@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TrackMS.Data;
 using TrackMS.Domain.Abstractions;
+using TrackMS.Domain.ServiceResultAPI;
 
 namespace TrackMS.WebAPI.Services;
 
-public class EfCrudService<TEntity, TKey> : ICrudService<TEntity, TKey> 
-    where TEntity : class, IEntity<TKey>
+public class EfCrudService<TEntity, TKey> 
+    : ICrudService<TEntity, TKey> where TEntity : class, IEntity<TKey>
 {
     private readonly DbSet<TEntity> _dataSet;
     private readonly ApplicationDbContext _dbContext;
@@ -16,35 +17,63 @@ public class EfCrudService<TEntity, TKey> : ICrudService<TEntity, TKey>
         _dataSet = _dbContext.Set<TEntity>();
     }
 
-    public virtual async Task CreateAsync(TEntity entity)
-    { 
-        _dataSet.Add(entity);
-        await _dbContext.SaveChangesAsync();
-    }
-
-    public virtual async Task DeleteAsync(TEntity entity)
+    public virtual async Task<ServiceResult> CreateAsync(TEntity entity)
     {
-        _dataSet.Remove(entity);
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            _dataSet.Add(entity);
+            await _dbContext.SaveChangesAsync();
+
+            return ServiceResults.Success();
+        }
+        catch (Exception ex)
+        {
+            return ServiceResults.Fail(new ErrorMessage(ErrorCodes.Exception, ex.Message));
+        }
     }
 
-    public virtual async Task UpdateAsync(TEntity entity)
+    public virtual async Task<ServiceResult> DeleteAsync(TEntity entity)
     {
-        _dataSet.Remove(entity);
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            _dataSet.Remove(entity);
+            await _dbContext.SaveChangesAsync();
+            
+            return ServiceResults.Success();
+        }
+        catch (Exception ex)
+        {
+            return ServiceResults.Fail(new ErrorMessage(ErrorCodes.Exception, ex.Message));
+        }
     }
 
-    public virtual async Task<TEntity> GetByIdAsync(TKey id)
+    public virtual async Task<ServiceResult> UpdateAsync(TEntity entity)
+    {
+        try
+        {
+            _dataSet.Update(entity);
+            await _dbContext.SaveChangesAsync();
+
+            return ServiceResults.Success();
+        }
+        catch (Exception ex)
+        {
+            return ServiceResults.Fail(new ErrorMessage(ErrorCodes.Exception, ex.Message));
+        }
+    }
+
+    public virtual async Task<ObjectServiceResult<TEntity>> GetByIdAsync(TKey id)
     {
         var entity = await _dataSet
             .FirstOrDefaultAsync(x => x.Id!.Equals(id));
 
         if (entity == null)
         {
-            throw new ApplicationException($"'{typeof(TEntity).Name}' not found");
+            return ServiceResults.Fail<TEntity>(new ErrorMessage(ErrorCodes.NotFound, 
+                $"{typeof(TEntity).Name} not found"));
         }
 
-        return entity;
+        return ServiceResults.Success(entity);
     }
 
 }

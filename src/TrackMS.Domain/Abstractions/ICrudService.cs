@@ -1,13 +1,15 @@
-﻿namespace TrackMS.Domain.Abstractions;
+﻿using TrackMS.Domain.ServiceResultAPI;
+
+namespace TrackMS.Domain.Abstractions;
 
 public interface ICrudService<TEntity, TKey>
     where TEntity : class, IEntity<TKey>
 {
-    public Task CreateAsync(TEntity entity);
+    public Task<ServiceResult> CreateAsync(TEntity entity);
 
-    public Task UpdateAsync(TEntity entity);
+    public Task<ServiceResult> UpdateAsync(TEntity entity);
     
-    public Task DeleteAsync(TEntity entity);
+    public Task<ServiceResult> DeleteAsync(TEntity entity);
 
-    public Task<TEntity> GetByIdAsync(TKey id);
+    public Task<ObjectServiceResult<TEntity>> GetByIdAsync(TKey id);
 }
