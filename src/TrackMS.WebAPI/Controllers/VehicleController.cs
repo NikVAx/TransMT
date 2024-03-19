@@ -19,24 +19,23 @@ public class VehicleController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<GetVehicleDto>> Get(string id)
     {
-        try
-        {
-            var vehicle = await _vehicleService.GetByIdAsync(id);
+        var result = await _vehicleService.GetByIdAsync(id);
 
-            return Ok(
-                new GetVehicleDto
-                { 
-                    Id = vehicle.Id,
-                    OperatingStatus = vehicle.OperatingStatus,
-                    StorageAreaId = vehicle.StorageAreaId,
-                    Type = vehicle.Type   
-                });
-
-        }
-        catch(ApplicationException ex)
+        if (!result.Succeeded)
         {
-            return NotFound();
+            return NotFound(result);
         }
+
+        var vehicle = result.Object;
+
+        return Ok(
+            new GetVehicleDto
+            {
+                Id = vehicle.Id,
+                OperatingStatus = vehicle.OperatingStatus,
+                StorageAreaId = vehicle.StorageAreaId,
+                Type = vehicle.Type
+            });
     }
 
     [HttpPost]
@@ -49,7 +48,12 @@ public class VehicleController : ControllerBase
             StorageAreaId = vehicleDto.StorageAreaId
         };
 
-        await _vehicleService.CreateAsync(vehicle);
+        var createResult = await _vehicleService.CreateAsync(vehicle);
+
+        if (!createResult.Succeeded)
+        {
+            return BadRequest(createResult);
+        }
 
         return Created("api/vehicles/{id}", vehicle);
     }
@@ -57,19 +61,24 @@ public class VehicleController : ControllerBase
     [HttpPatch("{id}")]
     public async Task<ActionResult> Patch(string id, [FromBody] PatchVehicleDto vehicleDto)
     {
-        try
+        var result = await _vehicleService.GetByIdAsync(id);
+
+        if (!result.Succeeded)
         {
-            var vehicle = await _vehicleService.GetByIdAsync(id);
-
-            vehicle.Type = vehicleDto.Type is null ? vehicle.Type : vehicleDto.Type;
-            vehicle.OperatingStatus = vehicleDto.OperatingStatus is null ? vehicle.OperatingStatus : vehicleDto.OperatingStatus;
-            vehicle.StorageAreaId = vehicleDto.StorageAreaId is null ? vehicle.StorageAreaId : vehicleDto.StorageAreaId;
-
-            await _vehicleService.UpdateAsync(vehicle);
+            return NotFound(result);
         }
-        catch(ApplicationException ex)
+
+        var vehicle = result.Object;
+
+        vehicle.Type = vehicleDto.Type is null ? vehicle.Type : vehicleDto.Type;
+        vehicle.OperatingStatus = vehicleDto.OperatingStatus is null ? vehicle.OperatingStatus : vehicleDto.OperatingStatus;
+        vehicle.StorageAreaId = vehicleDto.StorageAreaId is null ? vehicle.StorageAreaId : vehicleDto.StorageAreaId;
+
+        var updateResult = await _vehicleService.UpdateAsync(vehicle);
+
+        if (!updateResult.Succeeded)
         {
-            return NotFound();
+            return BadRequest(updateResult);
         }
 
         return Ok();
@@ -78,13 +87,11 @@ public class VehicleController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(string id)
     {
-        try
+        var result = await _vehicleService.GetByIdAsync(id);
+
+        if(!result.Succeeded)
         {
-            var vehicle = await _vehicleService.GetByIdAsync(id);
-        }
-        catch (ApplicationException ex) 
-        {
-            return NotFound();
+            return NotFound(result);
         }
 
         return NoContent();

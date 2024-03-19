@@ -19,21 +19,18 @@ public class VehicleOperatorController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<GetVehicleOperatorDto>> Get(string id)
     {
-        try
-        {
-            var vehicleOperator = await _vehicleOperatorService.GetByIdAsync(id);
+        var result = await _vehicleOperatorService.GetByIdAsync(id);
 
-            return Ok(
-                new GetVehicleOperatorDto
-                {
-                    Id = vehicleOperator.Id,
-                });
-
-        }
-        catch(ApplicationException ex)
+        if(!result.Succeeded)
         {
-            return NotFound();
+            return NotFound(result);           
         }
+
+        return Ok(
+            new GetVehicleOperatorDto
+            {
+                Id = result.Object.Id,
+            });
     }
 
     [HttpPost]
@@ -41,7 +38,13 @@ public class VehicleOperatorController : ControllerBase
     {
         var vehicleOperator = new VehicleOperator();
 
-        await _vehicleOperatorService.CreateAsync(vehicleOperator);
+        var result = await _vehicleOperatorService.CreateAsync(vehicleOperator);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(result);
+            
+        }
 
         return Created("api/vehicleOperators/{id}", vehicleOperator);
     }
@@ -49,15 +52,20 @@ public class VehicleOperatorController : ControllerBase
     [HttpPatch("{id}")]
     public async Task<ActionResult> Patch(string id, [FromBody] PatchVehicleOperatorDto vehicleOperatorDto)
     {
-        try
-        {
-            var vehicleOperator = await _vehicleOperatorService.GetByIdAsync(id);
+        var result = await _vehicleOperatorService.GetByIdAsync(id);
 
-            await _vehicleOperatorService.UpdateAsync(vehicleOperator);
-        }
-        catch(ApplicationException ex)
+        if(!result.Succeeded)
         {
-            return NotFound();
+            return NotFound(result);
+        }
+
+        var vehicleOperator = result.Object;
+
+        var updateResult = await _vehicleOperatorService.UpdateAsync(vehicleOperator);
+
+        if(!updateResult.Succeeded)
+        {
+            return BadRequest(updateResult);
         }
 
         return Ok();
@@ -66,13 +74,11 @@ public class VehicleOperatorController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(string id)
     {
-        try
+        var result = await _vehicleOperatorService.GetByIdAsync(id);
+
+        if(!result.Succeeded)
         {
-            var vehicleOperator = await _vehicleOperatorService.GetByIdAsync(id);
-        }
-        catch(ApplicationException ex)
-        {
-            return NotFound();
+            return NotFound(result);
         }
 
         return NoContent();

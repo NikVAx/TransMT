@@ -19,23 +19,22 @@ public class ConstructionController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<GetConstructionDto>> Get(string id)
     {
-        try
-        {
-            var construction = await _constructionService.GetByIdAsync(id);
+        var result = await _constructionService.GetByIdAsync(id);
 
-            return Ok(
-                new GetConstructionDto
-                {
-                    Id = construction.Id,
-                    Address = construction.Address,
-                    Location = construction.Location
-                });
-
-        }
-        catch(ApplicationException ex)
+        if(!result.Succeeded)
         {
-            return NotFound();
+            return NotFound(result);
         }
+
+        var construction = result.Object;
+
+        return Ok(
+            new GetConstructionDto
+            {
+                Id = construction.Id,
+                Address = construction.Address,
+                Location = construction.Location
+            });
     }
 
     [HttpPost]
@@ -47,7 +46,12 @@ public class ConstructionController : ControllerBase
             Location = constructionDto.Location
         };
 
-        await _constructionService.CreateAsync(construction);
+        var createResult = await _constructionService.CreateAsync(construction);
+
+        if(!createResult.Succeeded)
+        {
+            return BadRequest(createResult);
+        }
 
         return Created("api/constructions/{id}", construction);
     }
@@ -55,18 +59,23 @@ public class ConstructionController : ControllerBase
     [HttpPatch("{id}")]
     public async Task<ActionResult> Patch(string id, [FromBody] PatchConstructionDto constructionDto)
     {
-        try
+        var result = await _constructionService.GetByIdAsync(id);
+
+        if (!result.Succeeded)
         {
-            var construction = await _constructionService.GetByIdAsync(id);
-
-            construction.Address = constructionDto.Address is null ? construction.Address : constructionDto.Address;
-            construction.Location = constructionDto.Location is null ? construction.Location : constructionDto.Location;
-
-            await _constructionService.UpdateAsync(construction);
+            return NotFound(result);
         }
-        catch(ApplicationException ex)
+
+        var construction = result.Object;
+
+        construction.Address = constructionDto.Address is null ? construction.Address : constructionDto.Address;
+        construction.Location = constructionDto.Location is null ? construction.Location : constructionDto.Location;
+
+        var updateResult = await _constructionService.UpdateAsync(construction);
+
+        if (!updateResult.Succeeded)
         {
-            return NotFound();
+            return BadRequest(updateResult);
         }
 
         return Ok();
@@ -75,13 +84,11 @@ public class ConstructionController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(string id)
     {
-        try
+        var result = await _constructionService.GetByIdAsync(id);
+
+        if(!result.Succeeded)
         {
-            var construction = await _constructionService.GetByIdAsync(id);
-        }
-        catch(ApplicationException ex)
-        {
-            return NotFound();
+            return NotFound(result);
         }
 
         return NoContent();
