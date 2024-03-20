@@ -10,7 +10,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<VehicleOperator> VehicleOperators { get; set; }
     public DbSet<Construction> Constructions { get; set; }
 
-    public ApplicationDbContext(DbContextOptions options) : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
      
     }

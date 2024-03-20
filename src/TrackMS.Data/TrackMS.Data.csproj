@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TrackMS.AuthService\TrackMS.AuthService.csproj" />
     <ProjectReference Include="..\TrackMS.Domain\TrackMS.Domain.csproj" />
   </ItemGroup>
 

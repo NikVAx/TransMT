@@ -12,12 +12,18 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        var config = builder.Configuration;
 
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        builder.Services.AddDbContext<AuthDbContext>(options =>
+        {
+            options.UseNpgsql(
+                config.GetConnectionString("DefaultAuthConnection"));
+        });
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseNpgsql(connectionString);    
+            options.UseNpgsql(
+                config.GetConnectionString("DefaultAppConnection"));    
         });
 
         builder.Services.AddScoped<ICrudService<Construction, string>, EfCrudService<Construction, string>>();
@@ -40,10 +46,13 @@ public class Program
 
         using(var scope = app.Services.CreateScope())
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var appDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
 
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.EnsureCreated();
+            appDbContext.Database.EnsureDeleted();
+            authDbContext.Database.EnsureDeleted();
+            appDbContext.Database.EnsureCreated();
+            authDbContext.Database.EnsureCreated();
         }
 
         app.Run();
