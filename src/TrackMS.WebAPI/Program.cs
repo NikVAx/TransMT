@@ -26,7 +26,7 @@ public class Program
                 config.GetConnectionString("DefaultAppConnection"));    
         });
 
-        builder.Services.AddScoped<ICrudService<Construction, string>, EfCrudService<Construction, string>>();
+        builder.Services.AddScoped<ICrudService<Building, string>, EfCrudService<Building, string>>();
         builder.Services.AddScoped<ICrudService<GeoZone, string>, EfCrudService<GeoZone, string>>();
         builder.Services.AddScoped<ICrudService<Vehicle, string>, EfCrudService<Vehicle, string>>();
         builder.Services.AddScoped<ICrudService<VehicleOperator, string>, EfCrudService<VehicleOperator, string>>();

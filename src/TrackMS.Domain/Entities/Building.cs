@@ -3,7 +3,7 @@ using TrackMS.Domain.ValueTypes;
 
 namespace TrackMS.Domain.Entities;
 
-public class Construction : IEntity<string>
+public class Building : IEntity<string>
 {
     public string Id { get; set; }
 
