@@ -7,11 +7,11 @@ namespace TrackMS.WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class VehicleOperatorController : ControllerBase
+public class VehicleOperatorsController : ControllerBase
 {
     private readonly ICrudService<VehicleOperator, string> _vehicleOperatorService;
 
-    public VehicleOperatorController(ICrudService<VehicleOperator, string> vehicleOperatorService)
+    public VehicleOperatorsController(ICrudService<VehicleOperator, string> vehicleOperatorService)
     {
         _vehicleOperatorService = vehicleOperatorService;
     }

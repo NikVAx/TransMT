@@ -7,11 +7,11 @@ namespace TrackMS.WebAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ConstructionController : ControllerBase
+public class BuildingsController : ControllerBase
 {
-    private readonly ICrudService<Construction, string> _constructionService;
+    private readonly ICrudService<Building, string> _constructionService;
 
-    public ConstructionController(ICrudService<Construction, string> constructionService)
+    public BuildingsController(ICrudService<Building, string> constructionService)
     {
         _constructionService = constructionService;
     }
@@ -40,7 +40,7 @@ public class ConstructionController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> Post([FromBody] CreateConstructionDto constructionDto)
     {
-        var construction = new Construction
+        var construction = new Building
         {
             Address = constructionDto.Address,
             Location = constructionDto.Location

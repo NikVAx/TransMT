@@ -8,7 +8,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<GeoZone> GeoZones { get; set; }
     public DbSet<Vehicle> Vehicles { get; set; }
     public DbSet<VehicleOperator> VehicleOperators { get; set; }
-    public DbSet<Construction> Constructions { get; set; }
+    public DbSet<Building> Constructions { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
@@ -22,13 +22,13 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Construction>(x =>
+        modelBuilder.Entity<Building>(x =>
         {
             x.ComplexProperty(y => y.Location);
         });
 
         modelBuilder
-            .Entity<Construction>()
+            .Entity<Building>()
             .HasMany<Vehicle>()
             .WithOne()
             .HasForeignKey(x => x.StorageAreaId);
