@@ -1,8 +1,8 @@
 
 using Microsoft.EntityFrameworkCore;
 using TrackMS.Data;
-using TrackMS.Domain.Abstractions;
 using TrackMS.Domain.Entities;
+using TrackMS.Domain.Interfaces;
 using TrackMS.WebAPI.Services;
 
 namespace TrackMS.WebAPI;
@@ -31,11 +31,23 @@ public class Program
         builder.Services.AddScoped<ICrudService<Vehicle, string>, EfCrudService<Vehicle, string>>();
         builder.Services.AddScoped<ICrudService<VehicleOperator, string>, EfCrudService<VehicleOperator, string>>();
 
+        builder.Services.AddRouting(options => 
+        {
+            options.LowercaseUrls = true; 
+        });
+
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
         var app = builder.Build();
+
+        app.UseCors(options =>
+        {
+            options.AllowAnyOrigin();
+            options.AllowAnyMethod();
+            options.AllowAnyHeader();
+        });
 
         app.UseSwagger();
         app.UseSwaggerUI();

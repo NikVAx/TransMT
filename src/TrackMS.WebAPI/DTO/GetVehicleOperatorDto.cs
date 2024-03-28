@@ -1,6 +1,4 @@
-﻿using TrackMS.Domain.ValueTypes;
-
-namespace TrackMS.WebAPI.DTO;
+﻿namespace TrackMS.WebAPI.DTO;
 
 public class GetVehicleOperatorDto
 {

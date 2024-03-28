@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TrackMS.Domain.Abstractions;
+using Microsoft.EntityFrameworkCore;
 using TrackMS.Domain.Entities;
+using TrackMS.Domain.Enums;
+using TrackMS.Domain.Interfaces;
 using TrackMS.WebAPI.DTO;
+using TrackMS.WebAPI.DTO.API;
 
 namespace TrackMS.WebAPI.Controllers;
 
@@ -9,69 +12,116 @@ namespace TrackMS.WebAPI.Controllers;
 [ApiController]
 public class BuildingsController : ControllerBase
 {
-    private readonly ICrudService<Building, string> _constructionService;
+    private readonly ICrudService<Building, string> _buildingService;
 
-    public BuildingsController(ICrudService<Building, string> constructionService)
+    public BuildingsController(ICrudService<Building, string> buildingService)
     {
-        _constructionService = constructionService;
+        _buildingService = buildingService;
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<GetConstructionDto>> Get(string id)
+    [HttpGet]
+    public async Task<ActionResult<PageResponseDto<GetBuildingDto>>> GetPage([FromQuery] PageRequestDto getPageDto)
     {
-        var result = await _constructionService.GetByIdAsync(id);
+        var query = _buildingService.GetEntities();
+
+        if(getPageDto.SortBy != null && getPageDto.SortOrder != SortOrder.Descending)
+        {
+            query = getPageDto.SortBy switch
+            {
+                nameof(Building.Address ) => query.OrderBy(x => x.Address),
+                nameof(Building.Type) => query.OrderBy(x => x.Type),
+                nameof(Building.Name) => query.OrderBy(x => x.Name),
+                _ => query.OrderBy(x => x.Id),
+            };
+        }
+
+        var items = await query
+            .Skip(getPageDto.PageSize * getPageDto.PageIndex)
+            .Take(getPageDto.PageSize)
+            .Select(x => new GetBuildingDto
+            {
+                Id = x.Id,
+                Address = x.Address,
+                Location = x.Location,
+                Name = x.Name,
+                Type = x.Type,
+            })
+            .ToListAsync();
+
+        var count = await _buildingService.GetEntities()
+            .CountAsync();
+
+        return Ok(new PageResponseDto<GetBuildingDto>
+        {
+            Items = items,
+            PageIndex = getPageDto.PageIndex,
+            PageSize = getPageDto.PageSize,
+            TotalCount = count
+        });
+    }
+
+    [HttpGet("{id}", Name = "GetBuilding")]
+    public async Task<ActionResult<GetBuildingDto>> Get(string id)
+    {
+        var result = await _buildingService.GetByIdAsync(id);
 
         if(!result.Succeeded)
         {
             return NotFound(result);
         }
 
-        var construction = result.Object;
+        var building = result.Object;
 
         return Ok(
-            new GetConstructionDto
+            new GetBuildingDto
             {
-                Id = construction.Id,
-                Address = construction.Address,
-                Location = construction.Location
+                Id = building.Id,
+                Address = building.Address,
+                Location = building.Location,
+                Name = building.Name
             });
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post([FromBody] CreateConstructionDto constructionDto)
+    public async Task<ActionResult> Post([FromBody] CreateBuildingDto requestDto)
     {
-        var construction = new Building
+        var building = new Building
         {
-            Address = constructionDto.Address,
-            Location = constructionDto.Location
+            Id = Guid.NewGuid().ToString(),
+            Address = requestDto.Address,
+            Location = requestDto.Location,
+            Type = requestDto.Type,
+            Name = requestDto.Name
         };
 
-        var createResult = await _constructionService.CreateAsync(construction);
+        var createResult = await _buildingService.CreateAsync(building);
 
         if(!createResult.Succeeded)
         {
             return BadRequest(createResult);
         }
 
-        return Created("api/constructions/{id}", construction);
+        return CreatedAtRoute("GetBuilding", new { building.Id }, building);
     }
 
     [HttpPatch("{id}")]
-    public async Task<ActionResult> Patch(string id, [FromBody] PatchConstructionDto constructionDto)
+    public async Task<ActionResult> Patch(string id, [FromBody] PatchBuildingDto requestDto)
     {
-        var result = await _constructionService.GetByIdAsync(id);
+        var result = await _buildingService.GetByIdAsync(id);
 
         if (!result.Succeeded)
         {
             return NotFound(result);
         }
 
-        var construction = result.Object;
+        var building = result.Object;
 
-        construction.Address = constructionDto.Address is null ? construction.Address : constructionDto.Address;
-        construction.Location = constructionDto.Location is null ? construction.Location : constructionDto.Location;
+        building.Address = requestDto.Address is null ? building.Address : requestDto.Address;
+        building.Location = requestDto.Location is null ? building.Location : requestDto.Location;
+        building.Type = requestDto.Type is null ? building.Type : requestDto.Type;
+        building.Name = requestDto.Name is null ? building.Name : requestDto.Name;
 
-        var updateResult = await _constructionService.UpdateAsync(construction);
+        var updateResult = await _buildingService.UpdateAsync(building);
 
         if (!updateResult.Succeeded)
         {
@@ -84,7 +134,7 @@ public class BuildingsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(string id)
     {
-        var result = await _constructionService.GetByIdAsync(id);
+        var result = await _buildingService.GetByIdAsync(id);
 
         if(!result.Succeeded)
         {
