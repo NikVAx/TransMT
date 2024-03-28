@@ -1,4 +1,4 @@
-﻿namespace TrackMS.Domain.Abstractions;
+﻿namespace TrackMS.Domain.Interfaces;
 
 public interface IEntity<TKey>
 {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TrackMS.Domain.Entities;
+using TrackMS.Domain.ValueTypes;
 
 namespace TrackMS.Data;
 
@@ -22,16 +23,14 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Building>(x =>
+        modelBuilder.Entity<Building>(building =>
         {
-            x.ComplexProperty(y => y.Location);
+            building.ComplexProperty(y => y.Location);
+            building.HasMany<Vehicle>()
+                    .WithOne()
+                    .HasForeignKey(x => x.StorageAreaId);
         });
 
-        modelBuilder
-            .Entity<Building>()
-            .HasMany<Vehicle>()
-            .WithOne()
-            .HasForeignKey(x => x.StorageAreaId);
 
         base.OnModelCreating(modelBuilder);
     }

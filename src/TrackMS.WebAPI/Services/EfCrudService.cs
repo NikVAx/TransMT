@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TrackMS.Data;
-using TrackMS.Domain.Abstractions;
+using TrackMS.Domain.Interfaces;
 using TrackMS.Domain.ServiceResultAPI;
 
 namespace TrackMS.WebAPI.Services;
@@ -17,18 +17,23 @@ public class EfCrudService<TEntity, TKey>
         _dataSet = _dbContext.Set<TEntity>();
     }
 
+    public IQueryable<TEntity> GetEntities()
+    {
+        return _dataSet.AsQueryable();
+    }
+
     public virtual async Task<ServiceResult> CreateAsync(TEntity entity)
     {
         try
         {
             _dataSet.Add(entity);
             await _dbContext.SaveChangesAsync();
-
             return ServiceResults.Success();
         }
         catch (Exception ex)
         {
-            return ServiceResults.Fail(new ErrorMessage(ErrorCodes.Exception, ex.Message));
+            return ServiceResults.Fail(new ErrorMessage(ErrorCodes.Exception, ex.Message),
+                                       new ErrorMessage(ErrorCodes.Exception, ex.InnerException?.Message ?? "No inner exception"));
         }
     }
 
