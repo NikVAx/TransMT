@@ -13,5 +13,7 @@ public interface ICrudService<TEntity, TKey>
 
     public Task<ObjectServiceResult<TEntity>> GetByIdAsync(TKey id);
 
+    public Task<ServiceResult> DeleteManyAsync(IEnumerable<TKey> keys);
+
     public IQueryable<TEntity> GetEntities();
 }

@@ -143,4 +143,17 @@ public class BuildingsController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete]
+    public async Task<ActionResult> Delete(MultiplyDeletionRequestDto<string> requestDto)
+    {
+        var result = await _buildingService.DeleteManyAsync(requestDto.Keys);
+
+        if(!result.Succeeded)
+        {
+            return BadRequest(result);
+        }
+
+        return NoContent();
+    }
 }

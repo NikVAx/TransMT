@@ -37,6 +37,22 @@ public class EfCrudService<TEntity, TKey>
         }
     }
 
+    public virtual async Task<ServiceResult> DeleteManyAsync(IEnumerable<TKey> keys)
+    {
+        try
+        {
+            await _dataSet.Where(x => keys.Contains(x.Id))
+                .ExecuteDeleteAsync();
+            await _dbContext.SaveChangesAsync();
+
+            return ServiceResults.Success();
+        }
+        catch(Exception ex)
+        {
+            return ServiceResults.Fail(new ErrorMessage(ErrorCodes.Exception, ex.Message));
+        }
+    }
+
     public virtual async Task<ServiceResult> DeleteAsync(TEntity entity)
     {
         try
