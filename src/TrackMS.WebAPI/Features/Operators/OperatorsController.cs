@@ -4,9 +4,9 @@ using TrackMS.Domain.Entities;
 using TrackMS.Domain.Enums;
 using TrackMS.Domain.Interfaces;
 using TrackMS.WebAPI.DTO;
-using TrackMS.WebAPI.DTO.API;
+using TrackMS.WebAPI.Shared.DTO;
 
-namespace TrackMS.WebAPI.Controllers;
+namespace TrackMS.WebAPI.Features.Operators;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -57,7 +57,7 @@ public class OperatorsController : ControllerBase
 
         if(!result.Succeeded)
         {
-            return NotFound(result);           
+            return NotFound(result);
         }
 
         return Ok(
@@ -77,10 +77,10 @@ public class OperatorsController : ControllerBase
 
         var result = await _vehicleOperatorService.CreateAsync(vehicleOperator);
 
-        if (!result.Succeeded)
+        if(!result.Succeeded)
         {
             return BadRequest(result);
-            
+
         }
 
         return Created("api/vehicleOperators/{id}", vehicleOperator);

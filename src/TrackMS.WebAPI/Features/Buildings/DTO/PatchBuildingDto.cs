@@ -1,6 +1,6 @@
 ﻿using TrackMS.Domain.ValueTypes;
 
-namespace TrackMS.WebAPI.DTO;
+namespace TrackMS.WebAPI.Features.Buildings.DTO;
 
 public class PatchBuildingDto
 {
