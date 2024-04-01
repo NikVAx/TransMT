@@ -4,9 +4,10 @@ using TrackMS.Domain.Entities;
 using TrackMS.Domain.Enums;
 using TrackMS.Domain.Interfaces;
 using TrackMS.WebAPI.DTO;
-using TrackMS.WebAPI.DTO.API;
+using TrackMS.WebAPI.Features.Buildings.DTO;
+using TrackMS.WebAPI.Shared.DTO;
 
-namespace TrackMS.WebAPI.Controllers;
+namespace TrackMS.WebAPI.Features.Vehicles;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -28,7 +29,7 @@ public class VehiclesController : ControllerBase
         var query = _vehicleService.GetEntities();
 
         if(getPageDto.SortBy != null && getPageDto.SortOrder != SortOrder.Descending)
-        { 
+        {
             query = getPageDto.SortBy switch
             {
                 nameof(Vehicle.Type) => query.OrderBy(x => x.Type),
@@ -75,7 +76,7 @@ public class VehiclesController : ControllerBase
     {
         var result = await _vehicleService.GetByIdAsync(id);
 
-        if (!result.Succeeded)
+        if(!result.Succeeded)
         {
             return NotFound(result);
         }
@@ -104,7 +105,7 @@ public class VehiclesController : ControllerBase
     {
         var storageArea = await _buildingService.GetByIdAsync(vehicleDto.StorageAreaId);
 
-        if (!storageArea.Succeeded)
+        if(!storageArea.Succeeded)
         {
             return NotFound(storageArea);
         }
@@ -121,7 +122,7 @@ public class VehiclesController : ControllerBase
 
         var createResult = await _vehicleService.CreateAsync(vehicle);
 
-        if (!createResult.Succeeded)
+        if(!createResult.Succeeded)
         {
             return BadRequest(createResult);
         }
@@ -134,7 +135,7 @@ public class VehiclesController : ControllerBase
     {
         var result = await _vehicleService.GetByIdAsync(id);
 
-        if (!result.Succeeded)
+        if(!result.Succeeded)
         {
             return NotFound(result);
         }
@@ -147,7 +148,7 @@ public class VehiclesController : ControllerBase
 
         var updateResult = await _vehicleService.UpdateAsync(vehicle);
 
-        if (!updateResult.Succeeded)
+        if(!updateResult.Succeeded)
         {
             return BadRequest(updateResult);
         }

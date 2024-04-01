@@ -1,4 +1,4 @@
-﻿namespace TrackMS.WebAPI.DTO.API;
+﻿namespace TrackMS.WebAPI.Shared.DTO;
 
 public class PageResponseDto<TEntityDto>
 {

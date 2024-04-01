@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.Enums;
 using TrackMS.Domain.Interfaces;
-using TrackMS.WebAPI.DTO;
-using TrackMS.WebAPI.DTO.API;
+using TrackMS.WebAPI.Features.Buildings.DTO;
+using TrackMS.WebAPI.Shared.DTO;
 
-namespace TrackMS.WebAPI.Controllers;
+namespace TrackMS.WebAPI.Features.Buildings;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -28,7 +28,7 @@ public class BuildingsController : ControllerBase
         {
             query = getPageDto.SortBy switch
             {
-                nameof(Building.Address ) => query.OrderBy(x => x.Address),
+                nameof(Building.Address) => query.OrderBy(x => x.Address),
                 nameof(Building.Type) => query.OrderBy(x => x.Type),
                 nameof(Building.Name) => query.OrderBy(x => x.Name),
                 _ => query.OrderBy(x => x.Id),
@@ -109,7 +109,7 @@ public class BuildingsController : ControllerBase
     {
         var result = await _buildingService.GetByIdAsync(id);
 
-        if (!result.Succeeded)
+        if(!result.Succeeded)
         {
             return NotFound(result);
         }
@@ -123,7 +123,7 @@ public class BuildingsController : ControllerBase
 
         var updateResult = await _buildingService.UpdateAsync(building);
 
-        if (!updateResult.Succeeded)
+        if(!updateResult.Succeeded)
         {
             return BadRequest(updateResult);
         }

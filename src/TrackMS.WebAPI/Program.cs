@@ -61,8 +61,8 @@ public class Program
             var appDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
 
-            appDbContext.Database.EnsureDeleted();
-            authDbContext.Database.EnsureDeleted();
+            //appDbContext.Database.EnsureDeleted();
+            //authDbContext.Database.EnsureDeleted();
             appDbContext.Database.EnsureCreated();
             authDbContext.Database.EnsureCreated();
         }

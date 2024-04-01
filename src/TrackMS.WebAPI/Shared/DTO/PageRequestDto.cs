@@ -1,7 +1,7 @@
 ﻿using TrackMS.Domain.Enums;
 using TrackMS.Domain.Interfaces;
 
-namespace TrackMS.WebAPI.DTO.API;
+namespace TrackMS.WebAPI.Shared.DTO;
 
 public class PageRequestDto : ISortOptions
 {

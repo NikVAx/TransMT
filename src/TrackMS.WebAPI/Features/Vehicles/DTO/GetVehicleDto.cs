@@ -1,4 +1,5 @@
 ﻿using TrackMS.Domain.Entities;
+using TrackMS.WebAPI.Features.Buildings.DTO;
 
 namespace TrackMS.WebAPI.DTO;
 
