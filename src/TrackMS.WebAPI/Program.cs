@@ -1,9 +1,12 @@
-
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TrackMS.AuthService.Entities;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.Interfaces;
 using TrackMS.WebAPI.Services;
+using TrackMS.WebAPI.Shared.Mapping;
 
 namespace TrackMS.WebAPI;
 
@@ -18,23 +21,39 @@ public class Program
         {
             options.UseNpgsql(
                 config.GetConnectionString("DefaultAuthConnection"));
+            options.EnableDetailedErrors();
         });
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseNpgsql(
-                config.GetConnectionString("DefaultAppConnection"));    
+                config.GetConnectionString("DefaultAppConnection"));
+            options.EnableDetailedErrors();
         });
 
-        builder.Services.AddScoped<ICrudService<Building, string>, EfCrudService<Building, string>>();
+        builder.Services.AddAutoMapper(typeof(AppMappingProfile));
+
+        builder.Services.AddScoped<BuildingsService>();
+        builder.Services.AddScoped<VehiclesService>();
+
         builder.Services.AddScoped<ICrudService<GeoZone, string>, EfCrudService<GeoZone, string>>();
-        builder.Services.AddScoped<ICrudService<Vehicle, string>, EfCrudService<Vehicle, string>>();
         builder.Services.AddScoped<ICrudService<VehicleOperator, string>, EfCrudService<VehicleOperator, string>>();
 
         builder.Services.AddRouting(options => 
         {
-            options.LowercaseUrls = true; 
+            options.LowercaseUrls = true;
         });
+
+        builder.Services.AddIdentityCore<User>()
+                .AddRoles<Role>()
+                .AddDefaultTokenProviders()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddUserStore<UserStore<User, Role, AuthDbContext, string>>()
+                .AddRoleStore<RoleStore<Role, AuthDbContext, string>>()
+                .AddUserManager<UserManager<User>>()
+                .AddSignInManager<SignInManager<User>>();
+
+        builder.Services.AddAuthentication();
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();

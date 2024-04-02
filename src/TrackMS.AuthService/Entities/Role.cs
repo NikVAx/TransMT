@@ -2,7 +2,7 @@
 
 namespace TrackMS.AuthService.Entities;
 
-public class UserRole : IdentityRole
+public class Role : IdentityRole
 {
 
 }
