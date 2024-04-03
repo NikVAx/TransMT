@@ -15,4 +15,4 @@ jobs:
       run: |
         docker stop trackms || true && docker rm trackms || true
         docker build . --file Dockerfile --tag trackms
-        docker run --name trackms -p 9030:8080 --env-file "/var/apps/actions-runner/_work/secrets/env.trackms.list" trackms
+        docker run --name trackms -p 9030:8080 --env-file "/var/apps/actions-runner/_work/secrets/.env.trackms.list" trackms
