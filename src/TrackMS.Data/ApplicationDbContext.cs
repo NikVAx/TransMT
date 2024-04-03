@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+
 using System.Text.Json.Serialization;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.ValueTypes;
@@ -17,6 +18,7 @@ public class ApplicationDbContext : DbContext
      
     }
 
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
@@ -24,6 +26,7 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
         modelBuilder.Entity<Building>(building =>
         {
             building.ComplexProperty(y => y.Location);

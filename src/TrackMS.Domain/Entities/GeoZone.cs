@@ -1,4 +1,5 @@
-﻿using TrackMS.Domain.Interfaces;
+
+using TrackMS.Domain.Interfaces;
 using TrackMS.Domain.ValueTypes;
 
 namespace TrackMS.Domain.Entities;

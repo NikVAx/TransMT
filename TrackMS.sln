@@ -8,7 +8,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrackMS.Domain", "src\TrackMS.Domain\TrackMS.Domain.csproj", "{1EC58C4C-8A04-42E0-BA75-05F622F9FB37}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrackMS.Data", "src\TrackMS.Data\TrackMS.Data.csproj", "{684510D4-63F4-409E-AD82-E40E335D16EA}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

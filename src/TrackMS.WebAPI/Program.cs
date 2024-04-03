@@ -24,6 +24,7 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
         var config = builder.Configuration;
         
         var jwtOptions = config
@@ -134,6 +135,7 @@ public class Program
         app.UseSwaggerUI();
 
         app.UseAuthentication();
+
         app.UseAuthorization();
 
         app.MapControllers();
@@ -190,4 +192,5 @@ public class Program
 
         app.Run();
     }
+
 }
