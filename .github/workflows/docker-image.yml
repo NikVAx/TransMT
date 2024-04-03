@@ -8,12 +8,21 @@ on:
 
 jobs:
 
+  setup:
+    runs-on: self-hosted
+    steps:
+    - name: docker stop && docker rm
+      run: docker stop trackms || true && docker rm trackms || true
+      
   build:
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v3
-    - name: remove, build and run docker
-      run: |
-        docker stop trackms || true && docker rm trackms || true
-        docker build . --file Dockerfile --tag trackms
-        docker run --name trackms -p 9030:80 trackms
+    - name: docker build
+      run: docker build . --file Dockerfile --tag trackms
+
+  deploy:
+    runs-on: self-hosted
+    steps:
+    - name: docker run
+      run: docker run --name trackms -p 9030:80 --env-file "../../secrets/env.trackms.list" trackms
