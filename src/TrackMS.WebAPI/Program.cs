@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Text.Json;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.Interfaces;
@@ -26,8 +27,8 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         var config = builder.Configuration;
-        
-        var jwtOptions = config
+
+        var jwtOptions = builder.Configuration
             .GetSection("Jwt")
             .Get<JwtOptions>();
 
@@ -35,6 +36,8 @@ public class Program
         {
             throw new Exception("JwtOptions is not Setup");
         }
+
+        Console.WriteLine(JsonSerializer.Serialize(jwtOptions));
 
         var options = new SettingActions(config, jwtOptions);
 
@@ -145,49 +148,49 @@ public class Program
             var appDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
 
-            appDbContext.Database.EnsureDeleted();
-            authDbContext.Database.EnsureDeleted();
+            //appDbContext.Database.EnsureDeleted();
+            //authDbContext.Database.EnsureDeleted();
             appDbContext.Database.EnsureCreated();
             authDbContext.Database.EnsureCreated();
 
-            var usersService = scope.ServiceProvider.GetRequiredService<UsersService>();
+            //var usersService = scope.ServiceProvider.GetRequiredService<UsersService>();
+            //
+            //usersService.CreateUserAsync(
+            //    new Features.Users.DTO.CreateUserDto
+            //    {
+            //        Email = "admin@vkusnuts.online",
+            //        Username = "admin",
+            //        Password = "admin"
+            //    }).Wait();
+            //
+            //appDbContext.GeoZones.AddRange(
+            //    new GeoZone
+            //    {
+            //        Id = Guid.NewGuid().ToString(),
+            //        Color = "#FFFFFF",
+            //        Name = "GeoZone_1",
+            //        Points = new[]
+            //        {
+            //            new GeoPoint(0,0),
+            //            new GeoPoint(0,1),
+            //            new GeoPoint(1,1),
+            //        }
+            //    },
+            //    new GeoZone
+            //    {
+            //        Id = Guid.NewGuid().ToString(),
+            //        Color = "#001133",
+            //        Name = "GeoZone2",
+            //        Points = new[]
+            //        {
+            //            new GeoPoint(2,2),
+            //            new GeoPoint(2,3),
+            //            new GeoPoint(3,3),
+            //        }
+            //    }
+            //);
 
-            usersService.CreateUserAsync(
-                new Features.Users.DTO.CreateUserDto
-                {
-                    Email = "admin@vkusnuts.online",
-                    Username = "admin",
-                    Password = "admin"
-                }).Wait();
-
-            appDbContext.GeoZones.AddRange(
-                new GeoZone
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Color = "#FFFFFF",
-                    Name = "GeoZone_1",
-                    Points = new[]
-                    {
-                        new GeoPoint(0,0),
-                        new GeoPoint(0,1),
-                        new GeoPoint(1,1),
-                    }
-                },
-                new GeoZone
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Color = "#001133",
-                    Name = "GeoZone2",
-                    Points = new[]
-                    {
-                        new GeoPoint(2,2),
-                        new GeoPoint(2,3),
-                        new GeoPoint(3,3),
-                    }
-                }
-            );
-
-            appDbContext.SaveChanges();
+            //appDbContext.SaveChanges();
         }
 
         app.Run();
