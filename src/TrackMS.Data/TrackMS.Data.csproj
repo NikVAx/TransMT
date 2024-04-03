@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TrackMS.AuthService\TrackMS.AuthService.csproj" />
     <ProjectReference Include="..\TrackMS.Domain\TrackMS.Domain.csproj" />
   </ItemGroup>
 

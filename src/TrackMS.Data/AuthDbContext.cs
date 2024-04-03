@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TrackMS.AuthService.Entities;
+using TrackMS.Domain.Entities;
+using TrackMS.Domain.Entities;
 
 namespace TrackMS.Data;
 
 public class AuthDbContext 
-    : IdentityDbContext<User, UserRole, string>
+    : IdentityDbContext<User, Role, string>
 {
+    public DbSet<Session> Sessions { get; set; }
+
     public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
     {
 
@@ -17,14 +21,18 @@ public class AuthDbContext
         base.OnConfiguring(optionsBuilder);
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        modelBuilder
-            .Entity<User>()
-            .HasMany<Session>()
-            .WithOne()
-            .HasForeignKey(x => x.UserId);
+        builder.Entity<User>(u => {
+            u.HasMany<Session>().WithOne().HasForeignKey(x => x.UserId);
+        });
 
-        base.OnModelCreating(modelBuilder);
+        builder
+            .Entity<Role>()
+            .HasMany<User>()
+            .WithMany(x => x.Roles)
+            .UsingEntity<IdentityUserRole<string>>();
+            
+        base.OnModelCreating(builder);
     }
 }

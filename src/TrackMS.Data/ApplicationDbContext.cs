@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.ValueTypes;
 
@@ -9,7 +10,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<GeoZone> GeoZones { get; set; }
     public DbSet<Vehicle> Vehicles { get; set; }
     public DbSet<VehicleOperator> VehicleOperators { get; set; }
-    public DbSet<Building> Constructions { get; set; }
+    public DbSet<Building> Buildings { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
@@ -27,8 +28,16 @@ public class ApplicationDbContext : DbContext
         {
             building.ComplexProperty(y => y.Location);
             building.HasMany<Vehicle>()
-                    .WithOne()
+                    .WithOne(x => x.StorageArea)
                     .HasForeignKey(x => x.StorageAreaId);
+        });
+
+        modelBuilder.Entity<GeoZone>(geoZone =>
+        {
+            geoZone.OwnsMany<GeoPoint>(point => point.Points, ownedNavigationBuildier =>
+            {
+                ownedNavigationBuildier.ToJson();
+            });
         });
 
 

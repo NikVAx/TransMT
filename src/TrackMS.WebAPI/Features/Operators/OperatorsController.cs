@@ -24,11 +24,6 @@ public class OperatorsController : ControllerBase
     {
         var query = _vehicleOperatorService.GetEntities();
 
-        if(getPageDto.SortBy != null && getPageDto.SortOrder != SortOrder.Descending)
-        {
-
-        }
-
         var items = await query
             .Skip(getPageDto.PageSize * getPageDto.PageIndex)
             .Take(getPageDto.PageSize)
@@ -41,13 +36,7 @@ public class OperatorsController : ControllerBase
         var count = await _vehicleOperatorService.GetEntities()
             .CountAsync();
 
-        return Ok(new PageResponseDto<GetVehicleOperatorDto>
-        {
-            Items = items,
-            PageIndex = getPageDto.PageIndex,
-            PageSize = getPageDto.PageSize,
-            TotalCount = count
-        });
+        return Ok(new PageResponseDto<GetVehicleOperatorDto>(items, getPageDto.PageSize, getPageDto.PageIndex, count));
     }
 
     [HttpGet("{id}")]
@@ -80,10 +69,9 @@ public class OperatorsController : ControllerBase
         if(!result.Succeeded)
         {
             return BadRequest(result);
-
         }
 
-        return Created("api/vehicleOperators/{id}", vehicleOperator);
+        return Created("api/operators/{id}", vehicleOperator);
     }
 
     [HttpPatch("{id}")]
