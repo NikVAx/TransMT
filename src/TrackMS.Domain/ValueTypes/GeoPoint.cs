@@ -1,7 +1,7 @@
 ﻿namespace TrackMS.Domain.ValueTypes;
 
-public class GeoPoint(double latitute, double longitude)
+public class GeoPoint(double lat, double lng)
 {
-    public double Latitute { get; set; } = latitute;
-    public double Longitude { get; set; } = longitude;
+    public double Lat { get; set; } = lat;
+    public double Lng { get; set; } = lng;
 }

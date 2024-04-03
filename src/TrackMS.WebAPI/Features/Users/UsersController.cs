@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TrackMS.AuthService.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
 using TrackMS.WebAPI.Features.Users.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 
@@ -11,17 +8,10 @@ namespace TrackMS.WebAPI.Features.Users;
 [ApiController]
 public class UsersController : ControllerBase
 {
-    private readonly SignInManager<User> _signInManager;
-    private readonly UserManager<User> _userManager;
-    private readonly RoleManager<Role> _roleManager;
     private readonly UsersService _usersService;
 
-    public UsersController(SignInManager<User> signInManager,
-        UserManager<User> userManager, RoleManager<Role> roleManager, UsersService usersService)
+    public UsersController(UsersService usersService)
     {
-        _signInManager = signInManager;
-        _userManager = userManager;
-        _roleManager = roleManager;
         _usersService = usersService;
     }
 
@@ -32,7 +22,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<PageResponseDto<GetUserDto>>> GetPage([FromQuery] PageRequestDto getPageDto)
+    public async Task<ActionResult<PageResponseDto<GetUserDto>>> GetUsersPage([FromQuery] PageRequestDto getPageDto)
     {
         return await _usersService.GetUsersPageAsync(getPageDto.PageSize, getPageDto.PageIndex);   
     }

@@ -4,7 +4,6 @@ using TrackMS.Domain.Entities;
 using TrackMS.Domain.Interfaces;
 using TrackMS.WebAPI.DTO;
 using TrackMS.WebAPI.Features.Buildings;
-using TrackMS.WebAPI.Services;
 using TrackMS.WebAPI.Shared.DTO;
 
 namespace TrackMS.WebAPI.Features.Vehicles;
@@ -13,17 +12,13 @@ namespace TrackMS.WebAPI.Features.Vehicles;
 [ApiController]
 public class VehiclesController : ControllerBase
 {
-    private readonly ICrudService<Vehicle, string> _vehicleService;
     private readonly BuildingsService _buildingsService;
     private readonly VehiclesService _vehiclesService;
-    private readonly ApplicationDbContext _applicationDbContext;
 
-    public VehiclesController(ICrudService<Vehicle, string> vehicleService, BuildingsService buildingsService,
-        ApplicationDbContext applicationDbContext, VehiclesService vehiclesService)
+    public VehiclesController(BuildingsService buildingsService,
+        VehiclesService vehiclesService)
     {
-        _vehicleService = vehicleService;
         _buildingsService = buildingsService;
-        _applicationDbContext = applicationDbContext;
         _vehiclesService = vehiclesService;
     }
 

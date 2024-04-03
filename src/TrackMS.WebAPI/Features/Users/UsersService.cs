@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using TrackMS.AuthService.Entities;
+using TrackMS.Domain.Entities;
 using TrackMS.WebAPI.Features.Users.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 using TrackMS.WebAPI.Shared.Extensions;
 
 namespace TrackMS.WebAPI.Features.Users;
 
+[Authorize]
 public class UsersService
 {
     private readonly UserManager<User> _userManager;
@@ -47,7 +49,7 @@ public class UsersService
         var count = await _userManager.Users.CountAsync();
 
         var users = await _userManager.Users
-            .Order()
+            .OrderBy(x => x.Id)
             .GetPage(pageSize, pageIndex)
             .Select(user => _mapper.Map<GetUserDto>(user))
             .ToListAsync();
@@ -67,5 +69,21 @@ public class UsersService
         }
 
         return _mapper.Map<GetUserWithRolesDto>(user);
+    }
+
+    public async Task<User> GetUserModelByUserName(string userName)
+    {
+        var normilizedUserName = _userManager.NormalizeName(userName);
+
+        var user = await _userManager.Users
+            .Include(x => x.Roles)
+            .FirstOrDefaultAsync(x => x.NormalizedUserName == normilizedUserName);
+
+        if(user == null)
+        {
+            throw new Exception("Not Found");
+        }
+
+        return user;
     }
 }

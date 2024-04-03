@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using TrackMS.AuthService.Entities;
+using Microsoft.EntityFrameworkCore;
+using TrackMS.Domain.Entities;
 using TrackMS.WebAPI.Features.Roles.DTO;
 using TrackMS.WebAPI.Shared.DTO;
+using TrackMS.WebAPI.Shared.Extensions;
 
 namespace TrackMS.WebAPI.Features.Roles;
 
@@ -19,7 +21,6 @@ public static class BuildIn
         Role.SuperAdmin,
         Role.Admin
     ];
-
 }
 
 public class RolesService
@@ -49,11 +50,24 @@ public class RolesService
 
         if(actionResult.Succeeded)
         {
-            _mapper.Map<GetRoleDto>(role);
+           return _mapper.Map<GetRoleDto>(role);
         }
 
         var message = string.Join("; ", actionResult.Errors.Select(x => x.Description));
 
         throw new Exception("Invalid Role " + message);
+    }
+
+    public async Task<PageResponseDto<GetRoleDto>> GetRolesPageAsync(int pageSize, int pageIndex, CancellationToken cancellation = default)
+    {
+        var items = await _roleManager.Roles
+            .OrderBy( x => x.Id)
+            .GetPage(pageSize, pageIndex)
+            .Select(role => _mapper.Map<GetRoleDto>(role))
+            .ToListAsync();
+
+        var count = await _roleManager.Roles.CountAsync();
+
+        return new PageResponseDto<GetRoleDto>(items, pageSize, pageIndex, count);
     }
 }

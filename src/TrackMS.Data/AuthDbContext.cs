@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using TrackMS.AuthService.Entities;
+using TrackMS.Domain.Entities;
+using TrackMS.Domain.Entities;
 
 namespace TrackMS.Data;
 

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using TrackMS.Domain.Entities;
+using TrackMS.Domain.ValueTypes;
 
 namespace TrackMS.Data;
 
@@ -29,6 +31,15 @@ public class ApplicationDbContext : DbContext
                     .WithOne(x => x.StorageArea)
                     .HasForeignKey(x => x.StorageAreaId);
         });
+
+        modelBuilder.Entity<GeoZone>(geoZone =>
+        {
+            geoZone.OwnsMany<GeoPoint>(point => point.Points, ownedNavigationBuildier =>
+            {
+                ownedNavigationBuildier.ToJson();
+            });
+        });
+
 
         base.OnModelCreating(modelBuilder);
     }

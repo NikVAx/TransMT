@@ -69,10 +69,9 @@ public class OperatorsController : ControllerBase
         if(!result.Succeeded)
         {
             return BadRequest(result);
-
         }
 
-        return Created("api/vehicleOperators/{id}", vehicleOperator);
+        return Created("api/operators/{id}", vehicleOperator);
     }
 
     [HttpPatch("{id}")]
