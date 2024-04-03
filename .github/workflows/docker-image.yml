@@ -8,10 +8,12 @@ on:
 
 jobs:
 
-  build:
+  setup:
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      working-directory: src/TrackMS.WebAPI
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    - name: auto-deploy
+      run: |
+        git pull
+        docker stop trackms || true && docker rm trackms || true &&  docker rmi trackms:latest || true
+        docker build . --no-cache --file Dockerfile --tag trackms
+        docker run -d --name trackms -p 9030:8080 --env-file "/var/apps/actions-runner/_work/secrets/.env.trackms.list" trackms
