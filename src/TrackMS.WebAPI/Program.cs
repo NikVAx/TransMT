@@ -106,7 +106,7 @@ public class Program
                     Contact = new OpenApiContact
                     {
                         Email = "nik.vasilenko1203@gmail.com",
-                        Name = "Nikita Vasilenko Alex",
+                        Name = "Nikita Vasilenko Alexsandrovich",
                     },
                     Description = ""
                 });
