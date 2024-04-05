@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TrackMS.Data;
-using TrackMS.Domain.Entities;
+using TrackMS.WebAPI.Features.GeoZones.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 
 namespace TrackMS.WebAPI.Features.GeoZones;
@@ -10,18 +8,36 @@ namespace TrackMS.WebAPI.Features.GeoZones;
 [ApiController]
 public class GeoZonesController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly GeoZonesService _geoZonesService;
 
-    public GeoZonesController(ApplicationDbContext context)
+    public GeoZonesController(GeoZonesService geoZonesService)
     {
-        _context = context;
+        _geoZonesService = geoZonesService;
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetGeoZones()
+    public async Task<ActionResult<PageResponseDto<GetGeoZoneDto>>> GetGeoZones([FromQuery]PageRequestDto pageDto)
     {
-        var items = await _context.GeoZones.ToListAsync();
+        return await _geoZonesService.GetGeoZonesPageAsync(pageDto.PageSize, pageDto.PageIndex);
+    }
 
-        return Ok(new PageResponseDto<GeoZone>(items, items.Count, 0, items.Count));
+    [HttpPost]
+    public async Task<ActionResult<GetGeoZoneDto>> Post(CreateGeoZoneDto createDto)
+    {
+        return await _geoZonesService.CreateGeoZoneAsync(createDto);
+    }
+
+    [HttpPatch("id")]
+    public async Task<ActionResult<GetGeoZoneDto>> Patch(string id, PatchGeoZoneDto patchDto)
+    {
+        return await _geoZonesService.EditGeoZoneByIdAsync(id, patchDto);
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult> Delete(DeleteManyDto<string> deleteDto)
+    { 
+        await _geoZonesService.DeleteManyGeoZonesAsync(deleteDto);
+
+        return NoContent();
     }
 }

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using TrackMS.Domain.Entities;
-using TrackMS.Domain.Entities;
 using TrackMS.WebAPI.DTO;
 using TrackMS.WebAPI.Features.Buildings.DTO;
+using TrackMS.WebAPI.Features.GeoZones.DTO;
 using TrackMS.WebAPI.Features.Roles.DTO;
 using TrackMS.WebAPI.Features.Users.DTO;
 
@@ -18,5 +18,6 @@ public class MappingProfile : Profile
         CreateMap<User, GetUserDto>();
         CreateMap<User, GetUserWithRolesDto>();
         CreateMap<Role, GetRoleDto>();
+        CreateMap<GeoZone, GetGeoZoneDto>();
     }
 }
