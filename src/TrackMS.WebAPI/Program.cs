@@ -10,6 +10,7 @@ using TrackMS.Domain.Interfaces;
 using TrackMS.Domain.ValueTypes;
 using TrackMS.WebAPI.Features.Auth;
 using TrackMS.WebAPI.Features.Buildings;
+using TrackMS.WebAPI.Features.GeoZones;
 using TrackMS.WebAPI.Features.Roles;
 using TrackMS.WebAPI.Features.Users;
 using TrackMS.WebAPI.Features.Vehicles;
@@ -65,6 +66,7 @@ public class Program
         builder.Services.AddScoped<UsersService>();
         builder.Services.AddScoped<RolesService>();
         builder.Services.AddScoped<AuthService>();
+        builder.Services.AddScoped<GeoZonesService>();
 
         builder.Services.AddScoped<ICrudService<GeoZone, string>, EfCrudService<GeoZone, string>>();
         builder.Services.AddScoped<ICrudService<VehicleOperator, string>, EfCrudService<VehicleOperator, string>>();
