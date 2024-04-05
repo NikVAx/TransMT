@@ -19,17 +19,17 @@ public class GeoZonesService
         _mapper = mapper;
     }
 
-    public async Task<PageResponseDto<GetGeoZoneDto>> GetGeoZonesPageAsync(int pageSize, int pageIndex)
+    public async Task<PageResponseDto<GetGeoZoneDto>> GetGeoZonesPageAsync(int size, int index)
     {
         var items = await _dbContext.GeoZones
             .OrderBy(x => x.Name)
-            .GetPage(pageSize, pageIndex)
+            .GetPage(size, index)
             .Select(x => _mapper.Map<GetGeoZoneDto>(x))
             .ToListAsync();
 
         var count = await _dbContext.GeoZones.CountAsync(); 
 
-        return new PageResponseDto<GetGeoZoneDto>(items, pageSize, pageSize, count);
+        return new PageResponseDto<GetGeoZoneDto>(items, size, index, count);
     }
 
     public async Task<GetGeoZoneDto> CreateGeoZoneAsync(CreateGeoZoneDto createDto)
