@@ -3,17 +3,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using System.Text.Json;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.Interfaces;
-using TrackMS.Domain.ValueTypes;
 using TrackMS.WebAPI.Features.Auth;
 using TrackMS.WebAPI.Features.Buildings;
 using TrackMS.WebAPI.Features.GeoZones;
-using TrackMS.WebAPI.Features.Roles;
+using TrackMS.WebAPI.Features.IdentityManagement;
 using TrackMS.WebAPI.Features.Users;
 using TrackMS.WebAPI.Features.Vehicles;
+using TrackMS.WebAPI.Filters;
 using TrackMS.WebAPI.Services;
 using TrackMS.WebAPI.Shared.Mapping;
 using TrackMS.WebAPI.Shared.Models;
@@ -38,8 +37,6 @@ public class Program
             throw new Exception("JwtOptions is not Setup");
         }
 
-        Console.WriteLine(JsonSerializer.Serialize(jwtOptions));
-
         var options = new SettingActions(config, jwtOptions);
 
         builder.Services.AddDbContext<AuthDbContext>(options =>
@@ -61,15 +58,22 @@ public class Program
         builder.Services.AddSingleton(jwtOptions);
 
         builder.Services.AddScoped<JwtService>();
+        builder.Services.AddScoped<PermissionsService>();
+        builder.Services.AddScoped<RolesService>();
+        builder.Services.AddScoped<UsersService>();
+        builder.Services.AddScoped<AuthService>();
+
         builder.Services.AddScoped<BuildingsService>();
         builder.Services.AddScoped<VehiclesService>();
-        builder.Services.AddScoped<UsersService>();
-        builder.Services.AddScoped<RolesService>();
-        builder.Services.AddScoped<AuthService>();
         builder.Services.AddScoped<GeoZonesService>();
 
-        builder.Services.AddScoped<ICrudService<GeoZone, string>, EfCrudService<GeoZone, string>>();
-        builder.Services.AddScoped<ICrudService<VehicleOperator, string>, EfCrudService<VehicleOperator, string>>();
+        builder.Services.AddScoped<ICrudService<VehicleOperator, string>,
+            EfCrudService<VehicleOperator, string>>();
+
+        builder.Services.AddControllers(options =>
+        {
+            options.Filters.Add<DomainExceptionFilterAttribute>();
+        });
 
         builder.Services.AddRouting(options => 
         {
@@ -108,7 +112,7 @@ public class Program
                     Contact = new OpenApiContact
                     {
                         Email = "nik.vasilenko1203@gmail.com",
-                        Name = "Nikita Vasilenko Alexsandrovich 2",
+                        Name = "Nikita Vasilenko",
                     },
                     Description = ""
                 });
@@ -152,60 +156,10 @@ public class Program
         app.UseSwaggerUI();
 
         app.UseAuthentication();
-
         app.UseAuthorization();
 
         app.MapControllers();
 
-        using(var scope = app.Services.CreateScope())
-        {
-            var appDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var authDbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-
-            //appDbContext.Database.EnsureDeleted();
-            //authDbContext.Database.EnsureDeleted();
-            appDbContext.Database.EnsureCreated();
-            authDbContext.Database.EnsureCreated();
-
-            //var usersService = scope.ServiceProvider.GetRequiredService<UsersService>();
-            //
-            //usersService.CreateUserAsync(
-            //    new Features.Users.DTO.CreateUserDto
-            //    {
-            //        Email = "admin@vkusnuts.online",
-            //        Username = "admin",
-            //        Password = "admin"
-            //    }).Wait();
-            //
-            //appDbContext.GeoZones.AddRange(
-            //    new GeoZone
-            //    {
-            //        Id = Guid.NewGuid().ToString(),
-            //        Color = "#FFFFFF",
-            //        Name = "GeoZone_1",
-            //        Points = new[]
-            //        {
-            //            new GeoPoint(0,0),
-            //            new GeoPoint(0,1),
-            //            new GeoPoint(1,1),
-            //        }
-            //    },
-            //    new GeoZone
-            //    {
-            //        Id = Guid.NewGuid().ToString(),
-            //        Color = "#001133",
-            //        Name = "GeoZone2",
-            //        Points = new[]
-            //        {
-            //            new GeoPoint(2,2),
-            //            new GeoPoint(2,3),
-            //            new GeoPoint(3,3),
-            //        }
-            //    }
-            //);
-
-            //appDbContext.SaveChanges();
-        }
 
         app.Run();
     }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
+using TrackMS.Domain.Exceptions;
 using TrackMS.WebAPI.DTO;
 using TrackMS.WebAPI.Features.Buildings;
 using TrackMS.WebAPI.Shared.DTO;
@@ -58,7 +59,7 @@ public class VehiclesService
 
         if(vehicle == null)
         {
-            throw new Exception("Not Found");
+            throw new NotFoundException();
         }
 
         return vehicle;
@@ -87,7 +88,7 @@ public class VehiclesService
 
         if(count == 0)
         {
-            throw new Exception("Not Found");
+            throw new NotFoundException();
         }
     }
 
@@ -134,7 +135,7 @@ public class VehiclesService
 
         if(vehicle == null)
         {
-            throw new Exception("Not Found");
+            throw new NotFoundException();
         }
 
         return vehicle;

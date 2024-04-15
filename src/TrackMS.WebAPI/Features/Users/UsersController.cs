@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TrackMS.WebAPI.Features.Users.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 
@@ -16,7 +17,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<GetUserDto>> CreateUser(CreateUserDto createUserDto)
+    public async Task<ActionResult<GetUserWithRolesDto>> CreateUser(CreateUserDto createUserDto)
     {
         return await _usersService.CreateUserAsync(createUserDto);
     }

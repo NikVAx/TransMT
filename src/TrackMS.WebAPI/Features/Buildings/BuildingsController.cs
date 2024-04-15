@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TrackMS.WebAPI.Features.Buildings.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 
@@ -22,6 +23,7 @@ public class BuildingsController : ControllerBase
     }
 
     [HttpGet("{id}", Name = "GetBuilding")]
+    [Authorize]
     public async Task<ActionResult<GetBuildingDto>> Get(string id)
     {
         return Ok(await _buildingsService.GetBuildingByIdAsync(id));

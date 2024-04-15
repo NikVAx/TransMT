@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
+using TrackMS.Domain.Exceptions;
 using TrackMS.WebAPI.Features.Buildings.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 using TrackMS.WebAPI.Shared.Extensions;
@@ -29,7 +30,7 @@ public class BuildingsService
 
         if(building == null)
         {
-            throw new Exception("Not Found");
+            throw new NotFoundException();
         }
 
         return building;
@@ -75,7 +76,7 @@ public class BuildingsService
 
         if(count == 0)
         {
-            throw new Exception("Not Found");
+            throw new NotFoundException();
         }
     }
 
@@ -99,7 +100,7 @@ public class BuildingsService
 
         if(building == null)
         {
-            throw new Exception("Not Found");
+            throw new NotFoundException();
         }
 
         building.Address = patchDto.Address is null ? building.Address : patchDto.Address;
@@ -120,7 +121,7 @@ public class BuildingsService
 
         if(building == null)
         {
-            throw new Exception("Not Found");
+            throw new NotFoundException();
         }
 
         return building;

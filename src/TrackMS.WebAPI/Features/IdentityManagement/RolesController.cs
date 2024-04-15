@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TrackMS.Domain.Entities;
-using TrackMS.Domain.Entities;
-using TrackMS.WebAPI.Features.Roles.DTO;
+using TrackMS.WebAPI.Features.IdentityManagement.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 
-namespace TrackMS.WebAPI.Features.Roles;
+namespace TrackMS.WebAPI.Features.IdentityManagement;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -23,9 +22,9 @@ public class RolesController : ControllerBase
         _rolesService = rolesService;
     }
 
-    
+
     [HttpPost]
-    public async Task<ActionResult<GetRoleDto>> CreateUserRole(CreateRoleDto createRoleDto)
+    public async Task<ActionResult<GetRoleWithPermissionsDto>> CreateUserRole(CreateRoleDto createRoleDto)
     {
         return await _rolesService.CreateRoleAsync(createRoleDto);
     }
