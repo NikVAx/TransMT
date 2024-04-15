@@ -1,4 +1,4 @@
-﻿namespace TrackMS.WebAPI.Features.Roles.DTO;
+﻿namespace TrackMS.WebAPI.Features.IdentityManagement.DTO;
 
 public class GetRoleDto
 {

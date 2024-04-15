@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
 using TrackMS.WebAPI.Features.Auth.DTO;
+using TrackMS.WebAPI.Features.IdentityManagement.DTO;
 using TrackMS.WebAPI.Features.Users;
 using TrackMS.WebAPI.Features.Users.DTO;
 
@@ -34,7 +35,7 @@ public class AuthService
 
     public async Task<SignInResponseDto> SignInByPassword(SignInByPasswordDto signInDto)
     {
-        var user = await _usersService.GetUserModelByUserName(signInDto.UserName);
+        var user = await _usersService.GetUserModelByUserName(signInDto.Username);
 
         var signInResult = await _signInManager.CheckPasswordSignInAsync(user, signInDto.Password, false);
 
@@ -54,7 +55,18 @@ public class AuthService
 
             return new SignInResponseDto
             {
-                User = _mapper.Map<GetUserWithRolesDto>(user),
+                User = new GetAuthUserDto
+                {
+                    Id = user.Id,
+                    Email = user.Email!,
+                    Username = user.UserName!,
+                    Roles = user.Roles.Select(x => new GetRoleWithShortPermissionsDto
+                    {
+                        Id = x.Id,
+                        Name = x.Name!,
+                        Permissions = x.Permissions.Select(y => y.Id)
+                    })
+                }, 
                 AccessToken = await _jwtService.CreateAccessTokenAsync(user),
             };
         }
