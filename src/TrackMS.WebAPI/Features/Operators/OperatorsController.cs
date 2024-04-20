@@ -1,8 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TrackMS.Domain.Entities;
-using TrackMS.Domain.Enums;
-using TrackMS.Domain.Interfaces;
 using TrackMS.WebAPI.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 
@@ -12,99 +8,43 @@ namespace TrackMS.WebAPI.Features.Operators;
 [ApiController]
 public class OperatorsController : ControllerBase
 {
-    private readonly ICrudService<VehicleOperator, string> _vehicleOperatorService;
+    private readonly OperatorsService _operatorsService;
 
-    public OperatorsController(ICrudService<VehicleOperator, string> vehicleOperatorService)
+    public OperatorsController(OperatorsService operatorsService)
     {
-        _vehicleOperatorService = vehicleOperatorService;
+        _operatorsService = operatorsService;
     }
 
     [HttpGet]
     public async Task<ActionResult<PageResponseDto<GetVehicleOperatorDto>>> GetPage([FromQuery] PageRequestDto getPageDto)
     {
-        var query = _vehicleOperatorService.GetEntities();
-
-        var items = await query
-            .Skip(getPageDto.PageSize * getPageDto.PageIndex)
-            .Take(getPageDto.PageSize)
-            .Select(@operator => new GetVehicleOperatorDto
-            {
-                Id = @operator.Id,
-            })
-            .ToListAsync();
-
-        var count = await _vehicleOperatorService.GetEntities()
-            .CountAsync();
-
-        return Ok(new PageResponseDto<GetVehicleOperatorDto>(items, getPageDto.PageSize, getPageDto.PageIndex, count));
+        return await _operatorsService.GetOperatorsPageAsync(getPageDto.PageSize, getPageDto.PageIndex);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<GetVehicleOperatorDto>> Get(string id)
     {
-        var result = await _vehicleOperatorService.GetByIdAsync(id);
-
-        if(!result.Succeeded)
-        {
-            return NotFound(result);
-        }
-
-        return Ok(
-            new GetVehicleOperatorDto
-            {
-                Id = result.Object.Id,
-            });
+        return await _operatorsService.GetOperatorByIdAsync(id);
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post([FromBody] CreateVehicleOperatorDto vehicleOperatorDto)
+    public async Task<ActionResult<GetVehicleOperatorDto>> Post([FromBody] CreateVehicleOperatorDto createDto)
     {
-        var vehicleOperator = new VehicleOperator()
-        {
-            Id = Guid.NewGuid().ToString(),
-        };
+        var vehicle = await _operatorsService.CreateOperatorAsync(createDto);
 
-        var result = await _vehicleOperatorService.CreateAsync(vehicleOperator);
-
-        if(!result.Succeeded)
-        {
-            return BadRequest(result);
-        }
-
-        return Created("api/operators/{id}", vehicleOperator);
+        return vehicle;
     }
 
     [HttpPatch("{id}")]
-    public async Task<ActionResult> Patch(string id, [FromBody] PatchVehicleOperatorDto vehicleOperatorDto)
+    public async Task<ActionResult<GetVehicleOperatorDto>> Patch(string id, [FromBody] PatchVehicleOperatorDto patchDto)
     {
-        var result = await _vehicleOperatorService.GetByIdAsync(id);
-
-        if(!result.Succeeded)
-        {
-            return NotFound(result);
-        }
-
-        var vehicleOperator = result.Object;
-
-        var updateResult = await _vehicleOperatorService.UpdateAsync(vehicleOperator);
-
-        if(!updateResult.Succeeded)
-        {
-            return BadRequest(updateResult);
-        }
-
-        return Ok();
+        return await _operatorsService.EditOperatorByIdAsync(id, patchDto);
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(string id)
     {
-        var result = await _vehicleOperatorService.GetByIdAsync(id);
-
-        if(!result.Succeeded)
-        {
-            return NotFound(result);
-        }
+        await _operatorsService.DeleteOperatorByIdAsync(id);
 
         return NoContent();
     }

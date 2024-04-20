@@ -2,9 +2,9 @@
 
 namespace TrackMS.WebAPI.Shared.Settings;
 
-public class SignInSettings : SignInOptions
+public class SignInDefaultSettings : SignInOptions
 {
-    public SignInSettings()
+    public SignInDefaultSettings()
     {
         RequireConfirmedPhoneNumber = false;
         RequireConfirmedEmail = false;

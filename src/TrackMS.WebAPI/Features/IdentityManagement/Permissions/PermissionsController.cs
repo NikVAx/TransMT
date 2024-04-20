@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TrackMS.Data;
-using TrackMS.WebAPI.Features.IdentityManagement.DTO;
+using TrackMS.WebAPI.Features.IdentityManagement.Permissions;
+using TrackMS.WebAPI.Features.IdentityManagement.Permissions.DTO;
 
 namespace TrackMS.WebAPI.Features.IdentityManagement;
 

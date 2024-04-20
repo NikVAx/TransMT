@@ -4,9 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
 using TrackMS.WebAPI.Features.Auth.DTO;
-using TrackMS.WebAPI.Features.IdentityManagement.DTO;
+using TrackMS.WebAPI.Features.IdentityManagement.Roles.DTO;
 using TrackMS.WebAPI.Features.Users;
-using TrackMS.WebAPI.Features.Users.DTO;
 
 namespace TrackMS.WebAPI.Features.Auth;
 

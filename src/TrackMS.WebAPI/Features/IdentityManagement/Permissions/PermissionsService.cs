@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TrackMS.Data;
-using TrackMS.WebAPI.Features.IdentityManagement.DTO;
+using TrackMS.WebAPI.Features.IdentityManagement.Permissions.DTO;
 
-namespace TrackMS.WebAPI.Features.IdentityManagement;
+namespace TrackMS.WebAPI.Features.IdentityManagement.Permissions;
 
 public class PermissionsService
 {

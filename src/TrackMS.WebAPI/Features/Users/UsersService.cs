@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.Exceptions;
-using TrackMS.WebAPI.Features.IdentityManagement;
+using TrackMS.WebAPI.Features.IdentityManagement.Roles;
 using TrackMS.WebAPI.Features.Users.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 using TrackMS.WebAPI.Shared.Extensions;

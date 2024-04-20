@@ -2,8 +2,8 @@
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.ValueTypes;
-using TrackMS.WebAPI.Features.IdentityManagement;
-using TrackMS.WebAPI.Features.IdentityManagement.DTO;
+using TrackMS.WebAPI.Features.IdentityManagement.Roles;
+using TrackMS.WebAPI.Features.Roles.IdentityManagement.DTO;
 using TrackMS.WebAPI.Features.Users;
 using TrackMS.WebAPI.Shared.Models;
 
@@ -64,6 +64,34 @@ namespace TrackMS.WebAPI.Features.Development
                     }
                 );
 
+                var building = new Building
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Address = "default",
+                    Location = new GeoPoint(0, 0),
+                    Name = "default",
+                    Type = "default",
+                };
+
+                var vehicle = new Vehicle
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Number = "00112233",
+                    OperatingStatus = "active",
+                    StorageAreaId = building.Id,
+                    Type = "default"
+                };
+
+                var device = new Device
+                {
+                    Id = "0000-AAAA",
+                    VehicleId = vehicle.Id,
+                };
+
+                _appDbContext.Buildings.Add(building);
+                _appDbContext.Vehicles.Add(vehicle);
+                _appDbContext.Devices.Add(device);
+
                 _appDbContext.SaveChanges();
             }
 
@@ -72,21 +100,20 @@ namespace TrackMS.WebAPI.Features.Development
                 _authDbContext.Database.EnsureDeleted();
                 _authDbContext.Database.EnsureCreated();
 
-                var permissions = Enum.GetValues<ApiPermissions>()
-                    .Select(permission => Permissions.Create(permission))
-                    .ToList();
-
+                var permissions = Permissions.GetPermissions();
+                    
                 var identityPerms = permissions
-                    .Where(x => x.Name.EndsWith("User") || x.Name.EndsWith("Role"))
+                    .Where(x => x.Name.Contains("USER") || x.Name.Contains("ROLE"))
                     .ToList();
 
                 _authDbContext.Permissions.AddRange(permissions);
                 _authDbContext.SaveChanges();
                 _authDbContext.ChangeTracker.Clear();
 
-                var adminRole = await _rolesService.CreateRoleAsync(new CreateRoleDto
+                var superUserRole = await _rolesService.CreateRoleAsync(new CreateRoleDto
                 {
-                    Name = "admin",
+                    Name = "superuser",
+                    Description = "Пользователь со всеми разрешениями доступными в системе",
                     Permissions = permissions.Select(permission => permission.Id)
                 });
 
@@ -106,7 +133,7 @@ namespace TrackMS.WebAPI.Features.Development
                         Password = "admin",
                         Roles =
                         [
-                            adminRole.Name
+                            superUserRole.Name
                         ]
                     });
 

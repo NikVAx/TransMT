@@ -2,9 +2,9 @@
 
 namespace TrackMS.WebAPI.Shared.Settings;
 
-public class PasswordSettings : PasswordOptions
+public class PasswordDefaultSettings : PasswordOptions
 {
-    public PasswordSettings()
+    public PasswordDefaultSettings()
     {
         RequiredLength = 5;
         RequireDigit = false;

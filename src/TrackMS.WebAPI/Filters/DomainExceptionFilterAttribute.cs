@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TrackMS.Domain.Exceptions;
+using TrackMS.WebAPI.Shared.DTO;
 
 namespace TrackMS.WebAPI.Filters;
 
@@ -19,7 +20,19 @@ public class DomainExceptionFilterAttribute
                 });
                 context.ExceptionHandled = true;
                 break;
-                    
+
+            case ConflictException exception:
+                context.Result = new ConflictObjectResult(
+                    new ErrorResponse
+                    {
+                       Errors = 
+                       [ 
+                           new ErrorMessage("RoleError", exception.Message) 
+                       ]
+                    });
+                context.ExceptionHandled = true;
+                break;
+
         }
     }
 }
