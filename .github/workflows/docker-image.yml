@@ -1,0 +1,19 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  setup:
+    runs-on: self-hosted
+    steps:
+    - name: auto-deploy
+      run: |
+        git pull
+        docker stop trackms || true && docker rm trackms || true &&  docker rmi trackms:latest || true
+        docker build . --no-cache --file Dockerfile --tag trackms
+        docker run -d --name trackms -p 9030:8080 --env-file "/var/apps/actions-runner/_work/secrets/.env.trackms.list" trackms
