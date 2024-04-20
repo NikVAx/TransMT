@@ -2,18 +2,18 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
-using TrackMS.Domain.Interfaces;
 using TrackMS.WebAPI.Features.Auth;
 using TrackMS.WebAPI.Features.Buildings;
+using TrackMS.WebAPI.Features.Devices;
 using TrackMS.WebAPI.Features.GeoZones;
-using TrackMS.WebAPI.Features.IdentityManagement;
+using TrackMS.WebAPI.Features.IdentityManagement.Permissions;
+using TrackMS.WebAPI.Features.IdentityManagement.Roles;
+using TrackMS.WebAPI.Features.Operators;
 using TrackMS.WebAPI.Features.Users;
 using TrackMS.WebAPI.Features.Vehicles;
 using TrackMS.WebAPI.Filters;
-using TrackMS.WebAPI.Services;
 using TrackMS.WebAPI.Shared.Mapping;
 using TrackMS.WebAPI.Shared.Models;
 using TrackMS.WebAPI.Shared.Settings;
@@ -24,6 +24,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
+
         var builder = WebApplication.CreateBuilder(args);
 
         var config = builder.Configuration;
@@ -65,10 +66,9 @@ public class Program
 
         builder.Services.AddScoped<BuildingsService>();
         builder.Services.AddScoped<VehiclesService>();
+        builder.Services.AddScoped<OperatorsService>();
+        builder.Services.AddScoped<DevicesService>();
         builder.Services.AddScoped<GeoZonesService>();
-
-        builder.Services.AddScoped<ICrudService<VehicleOperator, string>,
-            EfCrudService<VehicleOperator, string>>();
 
         builder.Services.AddControllers(options =>
         {
@@ -81,12 +81,7 @@ public class Program
         });
 
         builder.Services
-            .AddIdentityCore<User>(options =>
-            {
-                options.SignIn = new SignInSettings();
-                options.Password = new PasswordSettings();
-                options.ClaimsIdentity = new ClaimsIdentitySettings();
-            })
+            .AddIdentityCore<User>(IdentitySettings.Default)
             .AddRoles<Role>()
             .AddDefaultTokenProviders()
             .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -102,46 +97,7 @@ public class Program
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(
-            options => 
-            {
-                options.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "TrackMS API",
-                    Version = "v1",
-                    Contact = new OpenApiContact
-                    {
-                        Email = "nik.vasilenko1203@gmail.com",
-                        Name = "Nikita Vasilenko",
-                    },
-                    Description = ""
-                });
-
-                options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = JwtBearerDefaults.AuthenticationScheme
-                });
-
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {{
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = JwtBearerDefaults.AuthenticationScheme
-                        }
-                    },
-                Array.Empty<string>()
-                }});
-
-                options.DescribeAllParametersInCamelCase();
-            }
-        );
+        builder.Services.AddSwaggerGen(SwaggerGenSettings.Default);
 
         var app = builder.Build();
 

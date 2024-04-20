@@ -23,7 +23,6 @@ public class BuildingsController : ControllerBase
     }
 
     [HttpGet("{id}", Name = "GetBuilding")]
-    [Authorize]
     public async Task<ActionResult<GetBuildingDto>> Get(string id)
     {
         return Ok(await _buildingsService.GetBuildingByIdAsync(id));

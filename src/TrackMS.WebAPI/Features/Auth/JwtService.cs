@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TrackMS.Domain.Entities;
-using TrackMS.WebAPI.Features.IdentityManagement;
+using TrackMS.WebAPI.Features.IdentityManagement.Roles;
 using TrackMS.WebAPI.Shared.Models;
 
 namespace TrackMS.WebAPI.Features.Auth;
