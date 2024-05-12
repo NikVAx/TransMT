@@ -33,4 +33,20 @@ public class UsersController : ControllerBase
     {
         return await _usersService.GetUserById(userId);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(string id)
+    {
+        await _usersService.DeleteUserByIdAsync(id);
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult> Delete(DeleteManyDto<string> deleteManyDto)
+    {
+        await _usersService.DeleteManyUsersAsync(deleteManyDto);
+
+        return NoContent();
+    }
 }

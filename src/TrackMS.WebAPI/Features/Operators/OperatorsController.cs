@@ -48,4 +48,12 @@ public class OperatorsController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete]
+    public async Task<ActionResult> Delete(DeleteManyDto<string> deleteManyDto)
+    {
+        await _operatorsService.DeleteManyOperatorsAsync(deleteManyDto);
+
+        return NoContent();
+    }
 }

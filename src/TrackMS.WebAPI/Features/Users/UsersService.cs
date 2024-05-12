@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.Exceptions;
+using TrackMS.WebAPI.Features.Devices;
 using TrackMS.WebAPI.Features.IdentityManagement.Roles;
 using TrackMS.WebAPI.Features.Users.DTO;
 using TrackMS.WebAPI.Shared.DTO;
@@ -118,5 +120,30 @@ public class UsersService
         }
 
         return user;
+    }
+
+    public async Task DeleteUserByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        int count = await _userManager.Users
+            .Where(x => x.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        if(count == 0)
+        {
+            throw new NotFoundException();
+        }
+    }
+
+    public async Task DeleteManyUsersAsync(DeleteManyDto<string> deleteDto,
+        CancellationToken cancellationToken = default)
+    {
+        int count = await _userManager.Users
+            .Where(x => deleteDto.Keys.Contains(x.Id))
+            .ExecuteDeleteAsync(cancellationToken);
+
+        if(count != deleteDto.Keys.Count())
+        {
+            throw new Exception("Partial Deletion");
+        }
     }
 }

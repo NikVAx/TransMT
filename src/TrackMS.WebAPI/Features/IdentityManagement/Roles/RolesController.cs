@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TrackMS.Domain.Entities;
-using TrackMS.WebAPI.Features.IdentityManagement.DTO;
 using TrackMS.WebAPI.Features.IdentityManagement.Roles.DTO;
 using TrackMS.WebAPI.Features.Roles.IdentityManagement.DTO;
 using TrackMS.WebAPI.Shared.DTO;
@@ -51,5 +50,13 @@ public class RolesController : ControllerBase
     public async Task<ActionResult<GetRoleWithShortPermissionsDto>> Get(string id)
     {
         return Ok(await _rolesService.GetRoleByIdAsync(id));
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(string id)
+    {
+        await _rolesService.DeleteRoleByIdAsync(id);
+
+        return NoContent();
     }
 }

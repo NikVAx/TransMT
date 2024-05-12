@@ -111,4 +111,15 @@ public class RolesService
         return items;
     }
 
+    public async Task DeleteRoleByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        int count = await _roleManager.Roles
+            .Where(x => x.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        if(count == 0)
+        {
+            throw new NotFoundException();
+        }
+    }
 }

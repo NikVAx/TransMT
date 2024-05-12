@@ -55,4 +55,12 @@ public class VehiclesController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete]
+    public async Task<ActionResult> Delete(DeleteManyDto<string> deleteManyDto)
+    {
+        await _vehiclesService.DeleteManyVehiclesAsync(deleteManyDto);
+
+        return NoContent();
+    }
 }
