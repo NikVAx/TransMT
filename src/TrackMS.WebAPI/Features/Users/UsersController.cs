@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TrackMS.WebAPI.Features.Users.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 
@@ -32,5 +31,27 @@ public class UsersController : ControllerBase
     public async Task<ActionResult<GetUserWithRolesDto>> GetUserById(string userId)
     {
         return await _usersService.GetUserById(userId);
+    }
+
+    [HttpPatch("{userId}")]
+    public async Task<ActionResult<GetUserWithRolesDto>> EditUserById(string userId, PatchUserDto dto)
+    {
+        return await _usersService.EditUserByIdAsync(userId, dto);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(string id)
+    {
+        await _usersService.DeleteUserByIdAsync(id);
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult> Delete(DeleteManyDto<string> deleteManyDto)
+    {
+        await _usersService.DeleteManyUsersAsync(deleteManyDto);
+
+        return NoContent();
     }
 }

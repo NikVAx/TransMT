@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TrackMS.WebAPI.Features.GeoZones.DTO;
+using TrackMS.WebAPI.Features.Users;
 using TrackMS.WebAPI.Shared.DTO;
 
 namespace TrackMS.WebAPI.Features.GeoZones;
@@ -38,6 +39,14 @@ public class GeoZonesController : ControllerBase
     public async Task<ActionResult> Delete(DeleteManyDto<string> deleteDto)
     { 
         await _geoZonesService.DeleteManyGeoZonesAsync(deleteDto);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(string id)
+    {
+        await _geoZonesService.DeleteGeoZoneByIdAsync(id);
 
         return NoContent();
     }

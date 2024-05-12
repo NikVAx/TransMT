@@ -4,6 +4,7 @@ using TrackMS.Data;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.Exceptions;
 using TrackMS.WebAPI.DTO;
+using TrackMS.WebAPI.Features.Operators.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 using TrackMS.WebAPI.Shared.Extensions;
 
@@ -22,30 +23,33 @@ public class OperatorsService
 
     public async Task<GetVehicleOperatorDto> CreateOperatorAsync(CreateVehicleOperatorDto createDto)
     {
-        var vehicle = new VehicleOperator
+        var vehicleOperator = new VehicleOperator
         {
             Id = Guid.NewGuid().ToString(),
+            FirstName = createDto.FirstName,
+            LastName = createDto.LastName,
+            MiddleName = createDto.MiddleName,
         };
 
-        _context.VehicleOperators.Add(vehicle);
+        _context.VehicleOperators.Add(vehicleOperator);
         await _context.SaveChangesAsync();
 
-        return _mapper.Map<GetVehicleOperatorDto>(vehicle);
+        return _mapper.Map<GetVehicleOperatorDto>(vehicleOperator);
     }
 
     public async Task<GetVehicleOperatorDto> GetOperatorByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        var vehicle = await _context.VehicleOperators
+        var vehicleOperator = await _context.VehicleOperators
             .Where(x => x.Id == id)
             .Select(x => _mapper.Map<GetVehicleOperatorDto>(x))
             .FirstOrDefaultAsync(cancellationToken);
 
-        if(vehicle == null)
+        if(vehicleOperator == null)
         {
             throw new NotFoundException();
         }
 
-        return vehicle;
+        return vehicleOperator;
     }
 
     public async Task<PageResponseDto<GetVehicleOperatorDto>> GetOperatorsPageAsync(int pageSize, int pageIndex,
@@ -53,13 +57,13 @@ public class OperatorsService
     {
         var count = await _context.VehicleOperators.CountAsync(cancellationToken);
 
-        var vehicles = await _context.VehicleOperators
+        var vehicleOperators = await _context.VehicleOperators
             .OrderBy(x => x.Id)
             .GetPage(pageSize, pageIndex)
             .Select(x => _mapper.Map<GetVehicleOperatorDto>(x))
             .ToListAsync(cancellationToken);
 
-        return new PageResponseDto<GetVehicleOperatorDto>(vehicles, pageSize, pageIndex, count);
+        return new PageResponseDto<GetVehicleOperatorDto>(vehicleOperators, pageSize, pageIndex, count);
     }
 
     public async Task DeleteOperatorByIdAsync(string id, CancellationToken cancellationToken = default)
@@ -90,24 +94,28 @@ public class OperatorsService
     public async Task<GetVehicleOperatorDto> EditOperatorByIdAsync(string id, PatchVehicleOperatorDto patchDto,
         CancellationToken cancellationToken = default)
     {
-        var vehicle = await GetOperatorModelByIdAsync(id, cancellationToken);
+        var vehicleOperator = await GetOperatorModelByIdAsync(id, cancellationToken);
+        
+        vehicleOperator.FirstName = patchDto.FirstName ?? vehicleOperator.FirstName;
+        vehicleOperator.LastName = patchDto.LastName ?? vehicleOperator.LastName; 
+        vehicleOperator.MiddleName = patchDto.MiddleName ?? vehicleOperator.MiddleName;
 
-        _context.Update(vehicle);
+        _context.Update(vehicleOperator);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<GetVehicleOperatorDto>(vehicle);
+        return _mapper.Map<GetVehicleOperatorDto>(vehicleOperator);
     }
 
     public async Task<VehicleOperator> GetOperatorModelByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        var vehicle = await _context.VehicleOperators
+        var vehicleOpertor = await _context.VehicleOperators
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-        if(vehicle == null)
+        if(vehicleOpertor == null)
         {
             throw new NotFoundException();
         }
 
-        return vehicle;
+        return vehicleOpertor;
     }
 }

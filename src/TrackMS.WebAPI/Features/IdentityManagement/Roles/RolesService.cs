@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.Exceptions;
-using TrackMS.WebAPI.Features.IdentityManagement.DTO;
 using TrackMS.WebAPI.Features.IdentityManagement.Roles.DTO;
 using TrackMS.WebAPI.Features.Roles.IdentityManagement.DTO;
 using TrackMS.WebAPI.Shared.DTO;
@@ -111,4 +110,15 @@ public class RolesService
         return items;
     }
 
+    public async Task DeleteRoleByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        int count = await _roleManager.Roles
+            .Where(x => x.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        if(count == 0)
+        {
+            throw new NotFoundException();
+        }
+    }
 }

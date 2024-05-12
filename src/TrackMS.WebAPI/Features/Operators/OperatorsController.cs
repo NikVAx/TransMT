@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TrackMS.WebAPI.DTO;
+using TrackMS.WebAPI.Features.Operators.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 
 namespace TrackMS.WebAPI.Features.Operators;
@@ -45,6 +46,14 @@ public class OperatorsController : ControllerBase
     public async Task<ActionResult> Delete(string id)
     {
         await _operatorsService.DeleteOperatorByIdAsync(id);
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult> Delete(DeleteManyDto<string> deleteManyDto)
+    {
+        await _operatorsService.DeleteManyOperatorsAsync(deleteManyDto);
 
         return NoContent();
     }

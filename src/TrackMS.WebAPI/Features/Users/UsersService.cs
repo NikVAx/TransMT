@@ -18,18 +18,21 @@ public class UsersService
     private readonly UserManager<User> _userManager;
     private readonly RolesService _rolesService;
     private readonly IMapper _mapper;
+    private readonly ILogger<UsersService> _logger;
 
     public UsersService(UserManager<User> userManager,
         RolesService rolesService,
-        IMapper mapper)
+        IMapper mapper,
+        ILogger<UsersService> logger)
     {
         _userManager = userManager;
         _rolesService = rolesService;
         _mapper = mapper;
+        _logger = logger;
     }
 
     public async Task<GetUserWithRolesDto> EditUserByIdAsync(string id, PatchUserDto patchDto,
-        CancellationToken cancellation = default)
+        CancellationToken cancellationToken = default)
     {
         var userWithRoles = await _userManager.Users
             .Include(x => x.Roles)
@@ -41,11 +44,15 @@ public class UsersService
         }
 
         userWithRoles.UserName = patchDto.Username ?? userWithRoles.UserName;
+        userWithRoles.FirstName = patchDto.FirstName ?? userWithRoles.FirstName;
+        userWithRoles.LastName = patchDto.LastName ?? userWithRoles.LastName;
+        userWithRoles.MiddleName = patchDto.MiddleName ?? userWithRoles.MiddleName;
 
         if (patchDto.Roles != null)
         {
-            userWithRoles.Roles = patchDto.Roles
-                .Select(name => new Role { Name = name }).ToList();
+            var roleModels = await _rolesService.GetRoleModelsByNamesAsync(patchDto.Roles, cancellationToken);
+
+            userWithRoles.Roles = roleModels;
         };
 
         return _mapper.Map<GetUserWithRolesDto>(userWithRoles);
@@ -54,12 +61,15 @@ public class UsersService
     public async Task<GetUserWithRolesDto> CreateUserAsync(CreateUserDto createUserDto, 
         CancellationToken cancellationToken = default)
     {
-        var roleModels = await _rolesService.GetRoleModelsByNamesAsync(createUserDto.Roles);
+        var roleModels = await _rolesService.GetRoleModelsByNamesAsync(createUserDto.Roles, cancellationToken);
 
         User user = new User
         {
             Email = createUserDto.Email,
             UserName = createUserDto.Username,
+            FirstName = createUserDto.FirstName,
+            LastName = createUserDto.LastName,
+            MiddleName = createUserDto.MiddleName,
             Roles =  roleModels,
         };
 
@@ -78,7 +88,7 @@ public class UsersService
     public async Task<PageResponseDto<GetUserDto>> GetUsersPageAsync(int pageSize, int pageIndex, 
         CancellationToken cancellationToken = default)
     {
-        var count = await _userManager.Users.CountAsync();
+        var count = await _userManager.Users.CountAsync(cancellationToken);
 
         var users = await _userManager.Users
             .OrderBy(x => x.Id)
@@ -93,6 +103,7 @@ public class UsersService
     {
         var user = await _userManager.Users
             .Include(x => x.Roles)
+                .ThenInclude(x => x.Permissions)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if(user == null)
@@ -103,14 +114,14 @@ public class UsersService
         return _mapper.Map<GetUserWithRolesDto>(user);
     }
 
-    public async Task<User> GetUserModelByUserName(string userName)
+    public async Task<User> GetUserModelByUserName(string userName, CancellationToken cancellationToken = default)
     {
         var normilizedUserName = _userManager.NormalizeName(userName);
 
         var user = await _userManager.Users
             .Include(x => x.Roles)
                 .ThenInclude(x => x.Permissions)
-            .FirstOrDefaultAsync(x => x.NormalizedUserName == normilizedUserName);
+            .FirstOrDefaultAsync(x => x.NormalizedUserName == normilizedUserName, cancellationToken);
 
         if(user == null)
         {
@@ -118,5 +129,30 @@ public class UsersService
         }
 
         return user;
+    }
+
+    public async Task DeleteUserByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        int count = await _userManager.Users
+            .Where(x => x.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        if(count == 0)
+        {
+            throw new NotFoundException();
+        }
+    }
+
+    public async Task DeleteManyUsersAsync(DeleteManyDto<string> deleteDto,
+        CancellationToken cancellationToken = default)
+    {
+        int count = await _userManager.Users
+            .Where(x => deleteDto.Keys.Contains(x.Id))
+            .ExecuteDeleteAsync(cancellationToken);
+
+        if(count != deleteDto.Keys.Count())
+        {
+            throw new Exception("Partial Deletion");
+        }
     }
 }

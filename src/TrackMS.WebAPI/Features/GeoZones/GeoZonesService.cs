@@ -78,4 +78,16 @@ public class GeoZonesService
 
         return _mapper.Map<GetGeoZoneDto>(geoZone);
     }
+
+    public async Task DeleteGeoZoneByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        int count = await _dbContext.GeoZones
+            .Where(x => x.Id == id)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        if(count == 0)
+        {
+            throw new NotFoundException();
+        }
+    }
 }
