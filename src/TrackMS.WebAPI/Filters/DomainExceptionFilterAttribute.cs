@@ -27,10 +27,14 @@ public class DomainExceptionFilterAttribute
                     {
                        Errors = 
                        [ 
-                           new ErrorMessage("RoleError", exception.Message) 
+                           new ErrorMessage("Conflict", exception.Message) 
                        ]
                     });
                 context.ExceptionHandled = true;
+                break;
+
+            default:
+                context.Result = new ObjectResult(context.Exception);
                 break;
 
         }
