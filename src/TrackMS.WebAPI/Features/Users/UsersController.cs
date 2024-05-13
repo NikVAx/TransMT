@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TrackMS.WebAPI.Features.Users.DTO;
 using TrackMS.WebAPI.Shared.DTO;
+using TrackMS.WebAPI.Shared.Models;
 
 namespace TrackMS.WebAPI.Features.Users;
 
@@ -16,18 +18,21 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(policy: PermissionKeys.CanCreateUser)]
     public async Task<ActionResult<GetUserWithRolesDto>> CreateUser(CreateUserDto createUserDto)
     {
         return await _usersService.CreateUserAsync(createUserDto);
     }
 
     [HttpGet]
+    [Authorize(policy: PermissionKeys.CanReadUser)]
     public async Task<ActionResult<PageResponseDto<GetUserDto>>> GetUsersPage([FromQuery] PageRequestDto getPageDto)
     {
         return await _usersService.GetUsersPageAsync(getPageDto.PageSize, getPageDto.PageIndex);   
     }
 
     [HttpGet("{userId}")]
+    [Authorize(policy: PermissionKeys.CanReadUser)]
     public async Task<ActionResult<GetUserWithRolesDto>> GetUserById(string userId)
     {
         return await _usersService.GetUserById(userId);
@@ -40,6 +45,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(policy: PermissionKeys.CanDeleteUser)]
     public async Task<ActionResult> Delete(string id)
     {
         await _usersService.DeleteUserByIdAsync(id);
@@ -48,6 +54,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize(policy: PermissionKeys.CanDeleteUser)]
     public async Task<ActionResult> Delete(DeleteManyDto<string> deleteManyDto)
     {
         await _usersService.DeleteManyUsersAsync(deleteManyDto);

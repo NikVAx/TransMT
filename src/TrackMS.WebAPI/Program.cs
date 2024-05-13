@@ -90,7 +90,17 @@ public class Program
             .AddUserManager<UserManager<User>>()
             .AddSignInManager<SignInManager<User>>();
 
-        builder.Services.AddAuthorization();
+        var authorizationBuilder = builder.Services.AddAuthorizationBuilder();
+
+        var permissions =  Permissions.GetPermissions();
+
+        foreach(var permission in permissions)
+        {
+            authorizationBuilder.AddPolicy(permission.Id, policyBuilder 
+                => policyBuilder.RequireClaim(AuthClaimTypes.Permission, permission.Id));
+        }
+
+
         builder.Services.AddCors();
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         .AddJwtBearer(options.JwtOptions);

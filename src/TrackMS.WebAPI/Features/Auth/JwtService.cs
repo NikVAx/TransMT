@@ -43,7 +43,6 @@ public class JwtService
         claims.AddRange(roleNames.Select(roleName => new Claim(ClaimTypes.Role, roleName)));
         claims.AddRange(permissions.Select(permission => new Claim(AuthClaimTypes.Permission, permission.Id)));
         
-
         var now = DateTime.Now;
         var lifetime = Convert.ToInt64(_jwtOptions.LifetimeInSeconds);
 
