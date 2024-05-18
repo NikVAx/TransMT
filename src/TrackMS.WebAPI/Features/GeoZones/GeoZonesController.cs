@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TrackMS.WebAPI.Features.GeoZones.DTO;
-using TrackMS.WebAPI.Features.Users;
 using TrackMS.WebAPI.Shared.DTO;
 
 namespace TrackMS.WebAPI.Features.GeoZones;

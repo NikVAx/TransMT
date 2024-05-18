@@ -1,6 +1,7 @@
 
 using TrackMS.Domain.Interfaces;
 using TrackMS.Domain.ValueTypes;
+using NetTopologySuite.Geometries;
 
 namespace TrackMS.Domain.Entities;
 
@@ -10,5 +11,5 @@ public class GeoZone : IEntity<string>
     public string Name { get; set; }
     public string Color { get; set; }
 
-    public ICollection<GeoPoint> Points { get; set; }
+    public Polygon Points { get; set; }
 }

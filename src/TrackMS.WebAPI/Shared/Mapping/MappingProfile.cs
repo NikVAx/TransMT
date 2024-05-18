@@ -8,6 +8,8 @@ using TrackMS.WebAPI.Features.IdentityManagement.DTO;
 using TrackMS.WebAPI.Features.IdentityManagement.Permissions.DTO;
 using TrackMS.WebAPI.Features.IdentityManagement.Roles.DTO;
 using TrackMS.WebAPI.Features.Users.DTO;
+using NetTopologySuite.Geometries;
+using TrackMS.Domain.ValueTypes;
 
 namespace TrackMS.WebAPI.Shared.Mapping;
 
@@ -30,10 +32,25 @@ public class MappingProfile : Profile
         CreateMap<User, GetUserWithRolesDto>();
         #endregion
 
-        CreateMap<Building, GetBuildingDto>();
+        CreateMap<Building, GetBuildingDto>()
+            .ForMember(
+                dest => dest.Location, 
+                src => src.MapFrom(s => s.Location)
+            );
+
         CreateMap<Vehicle, GetVehicleDto>();
         CreateMap<VehicleOperator, GetVehicleOperatorDto>();
         CreateMap<Device, GetDeviceDto>();
         CreateMap<GeoZone, GetGeoZoneDto>();
+
+        CreateMap<GeoPoint, Point>()
+            .ConstructUsing(x => new Point(x.Lat, x.Lng));
+        CreateMap<Point, GeoPoint>()
+            .ConstructUsing(x => new GeoPoint(x.X, x.Y));
+        CreateMap<Polygon, IEnumerable<GeoPoint>>()
+            .ConstructUsing(x => x.Coordinates
+                .Select(c => new GeoPoint(c.X, c.Y))
+                .Take(x.Coordinates.Length - 1)
+                .ToList());
     }
 }

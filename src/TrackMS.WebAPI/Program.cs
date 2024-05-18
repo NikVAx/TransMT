@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
 using TrackMS.WebAPI.Features.Auth;
@@ -47,10 +48,15 @@ public class Program
             options.EnableDetailedErrors();
         });
 
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(
+            config.GetConnectionString("DefaultAppConnection"));
+        dataSourceBuilder.UseNetTopologySuite();
+        var dataSource = dataSourceBuilder.Build();
+
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseNpgsql(
-                config.GetConnectionString("DefaultAppConnection"));
+            options.UseNpgsql(dataSource, npgsqlOptions => 
+                npgsqlOptions.UseNetTopologySuite());
             options.EnableDetailedErrors();
         });
 

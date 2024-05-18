@@ -6,6 +6,7 @@ using TrackMS.Domain.Exceptions;
 using TrackMS.WebAPI.Features.GeoZones.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 using TrackMS.WebAPI.Shared.Extensions;
+using TrackMS.WebAPI.Shared.Utils;
 
 namespace TrackMS.WebAPI.Features.GeoZones;
 
@@ -40,7 +41,7 @@ public class GeoZonesService
             Id = Guid.NewGuid().ToString(),
             Color = createDto.Color,
             Name = createDto.Name,
-            Points = createDto.Points,
+            Points = GeoUtil.CreatePolygon(createDto.Points),
         };
 
         _dbContext.Add(geoZone);
@@ -71,7 +72,11 @@ public class GeoZonesService
         }
 
         geoZone.Name = patchDto.Name ?? geoZone.Name;
-        geoZone.Points = patchDto.Points ?? geoZone.Points;
+
+        geoZone.Points = patchDto.Points == null ? 
+            geoZone.Points :
+            GeoUtil.CreatePolygon(patchDto.Points);
+
         geoZone.Color = patchDto.Color ?? geoZone.Color;
 
         await _dbContext.SaveChangesAsync();

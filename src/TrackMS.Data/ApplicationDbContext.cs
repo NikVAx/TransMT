@@ -26,10 +26,13 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
+        modelBuilder.HasPostgresExtension("postgis");
+        
         modelBuilder.Entity<Building>(building =>
         {
-            building.ComplexProperty(y => y.Location);
+            building.Property(y => y.Location)
+                    .HasColumnType("geography (point)");
+              
             building.HasMany<Vehicle>()
                     .WithOne(x => x.StorageArea)
                     .HasForeignKey(x => x.StorageAreaId);
@@ -53,10 +56,8 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<GeoZone>(geoZone =>
         {
-            geoZone.OwnsMany(point => point.Points, ownedNavigationBuildier =>
-            {
-                ownedNavigationBuildier.ToJson();
-            });
+            geoZone.Property(y => y.Points)
+                .HasColumnType("geography (polygon)");
         });
 
         base.OnModelCreating(modelBuilder);
