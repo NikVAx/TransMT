@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TrackMS.WebAPI.Features.Buildings;
 using TrackMS.WebAPI.Features.Devices.DTO;
 using TrackMS.WebAPI.Shared.DTO;
+using TrackMS.WebAPI.Shared.Models;
 
 namespace TrackMS.WebAPI.Features.Devices;
 
@@ -18,18 +18,21 @@ public class DevicesController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(policy: PermissionKeys.CanReadDevice)]
     public async Task<ActionResult<PageResponseDto<GetDeviceDto>>> GetPage([FromQuery] PageRequestDto getPageDto)
     {
         return await _devicesService.GetDevicesPageAsync(getPageDto.PageSize, getPageDto.PageIndex);
     }
 
     [HttpGet("{id}")]
+    [Authorize(policy: PermissionKeys.CanReadDevice)]
     public async Task<ActionResult<GetDeviceDto>> Get(string id)
     {
         return await _devicesService.GetDeviceByIdAsync(id);
     }
 
     [HttpPost]
+    [Authorize(policy: PermissionKeys.CanCreateDevice)]
     public async Task<ActionResult<GetDeviceDto>> Post([FromBody] CreateDeviceDto createDto)
     {
         var vehicle = await _devicesService.CreateDeviceAsync(createDto);
@@ -38,12 +41,14 @@ public class DevicesController : ControllerBase
     }
 
     [HttpPatch("{id}")]
+    [Authorize(policy: PermissionKeys.CanUpdateDevice)]
     public async Task<ActionResult<GetDeviceDto>> Patch(string id, [FromBody] PatchDeviceDto patchDto)
     {
         return await _devicesService.EditDeviceByIdAsync(id, patchDto);
     }
 
     [HttpDelete("{id}")]
+    [Authorize(policy: PermissionKeys.CanDeleteDevice)]
     public async Task<ActionResult> Delete(string id)
     {
         await _devicesService.DeleteDeviceByIdAsync(id);
@@ -52,6 +57,7 @@ public class DevicesController : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize(policy: PermissionKeys.CanDeleteDevice)]
     public async Task<ActionResult> Delete(DeleteManyDto<string> deleteManyDto)
     {
         await _devicesService.DeleteManyDevicesAsync(deleteManyDto);

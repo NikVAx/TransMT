@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using TrackMS.Domain.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
 using TrackMS.WebAPI.Features.IdentityManagement.Roles.DTO;
 using TrackMS.WebAPI.Features.Roles.IdentityManagement.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.AspNetCore.Authorization;
+using TrackMS.WebAPI.Shared.Models;
 
 namespace TrackMS.WebAPI.Features.IdentityManagement.Roles;
 
@@ -13,26 +13,23 @@ namespace TrackMS.WebAPI.Features.IdentityManagement.Roles;
 [ApiController]
 public class RolesController : ControllerBase
 {
-    private readonly SignInManager<User> _signInManager;
-    private readonly UserManager<User> _userManager;
     private readonly RolesService _rolesService;
 
-    public RolesController(SignInManager<User> signInManager,
-        UserManager<User> userManager, RoleManager<Role> roleManager, RolesService rolesService)
+    public RolesController(RolesService rolesService)
     {
-        _signInManager = signInManager;
-        _userManager = userManager;
         _rolesService = rolesService;
     }
 
 
     [HttpPost]
+    [Authorize(policy: PermissionKeys.CanCreateRole)]
     public async Task<ActionResult<GetRoleWithShortPermissionsDto>> CreateUserRole(CreateRoleDto createRoleDto)
     {
         return await _rolesService.CreateRoleAsync(createRoleDto);
     }
 
     [HttpDelete]
+    [Authorize(policy: PermissionKeys.CanDeleteRole)]
     public async Task<ActionResult> DeleteManyRoles(DeleteManyDto<string> deleteManyDto)
     {
         await _rolesService.DeleteManyRolesAsync(deleteManyDto);
@@ -41,18 +38,21 @@ public class RolesController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(policy: PermissionKeys.CanReadRole)]
     public async Task<ActionResult<PageResponseDto<GetRoleDto>>> GetPage([FromQuery] PageRequestDto getPageDto)
     {
         return await _rolesService.GetRolesPageAsync(getPageDto.PageSize, getPageDto.PageIndex);
     }
 
     [HttpGet("{id}")]
+    [Authorize(policy: PermissionKeys.CanReadRole)]
     public async Task<ActionResult<GetRoleWithShortPermissionsDto>> Get(string id)
     {
         return Ok(await _rolesService.GetRoleByIdAsync(id));
     }
 
     [HttpDelete("{id}")]
+    [Authorize(policy: PermissionKeys.CanDeleteRole)]
     public async Task<ActionResult> Delete(string id)
     {
         await _rolesService.DeleteRoleByIdAsync(id);

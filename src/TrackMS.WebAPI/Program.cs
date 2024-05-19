@@ -106,7 +106,6 @@ public class Program
                 => policyBuilder.RequireClaim(AuthClaimTypes.Permission, permission.Id));
         }
 
-
         builder.Services.AddCors();
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         .AddJwtBearer(options.JwtOptions);

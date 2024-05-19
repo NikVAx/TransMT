@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TrackMS.Data;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TrackMS.WebAPI.Features.IdentityManagement.Permissions;
 using TrackMS.WebAPI.Features.IdentityManagement.Permissions.DTO;
 
@@ -17,6 +17,7 @@ public class PermissionsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<IEnumerable<GetPermissionDto>>> GetAllPermissions()
     {
         return Ok(await _permissionsService.GetPermissionsAsync());

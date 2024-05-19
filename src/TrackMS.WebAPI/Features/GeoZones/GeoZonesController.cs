@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TrackMS.WebAPI.Features.GeoZones.DTO;
 using TrackMS.WebAPI.Shared.DTO;
+using TrackMS.WebAPI.Shared.Models;
 
 namespace TrackMS.WebAPI.Features.GeoZones;
 
@@ -16,24 +18,28 @@ public class GeoZonesController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(policy: PermissionKeys.CanReadGeoZone)]
     public async Task<ActionResult<PageResponseDto<GetGeoZoneDto>>> GetGeoZones([FromQuery]PageRequestDto pageDto)
     {
         return await _geoZonesService.GetGeoZonesPageAsync(pageDto.PageSize, pageDto.PageIndex);
     }
 
     [HttpPost]
+    [Authorize(policy: PermissionKeys.CanCreateGeoZone)]
     public async Task<ActionResult<GetGeoZoneDto>> Post(CreateGeoZoneDto createDto)
     {
         return await _geoZonesService.CreateGeoZoneAsync(createDto);
     }
 
     [HttpPatch("id")]
+    [Authorize(policy: PermissionKeys.CanUpdateGeoZone)]
     public async Task<ActionResult<GetGeoZoneDto>> Patch(string id, PatchGeoZoneDto patchDto)
     {
         return await _geoZonesService.EditGeoZoneByIdAsync(id, patchDto);
     }
 
     [HttpDelete]
+    [Authorize(policy: PermissionKeys.CanDeleteGeoZone)]
     public async Task<ActionResult> Delete(DeleteManyDto<string> deleteDto)
     { 
         await _geoZonesService.DeleteManyGeoZonesAsync(deleteDto);
@@ -42,6 +48,7 @@ public class GeoZonesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(policy: PermissionKeys.CanDeleteGeoZone)]
     public async Task<ActionResult> Delete(string id)
     {
         await _geoZonesService.DeleteGeoZoneByIdAsync(id);
