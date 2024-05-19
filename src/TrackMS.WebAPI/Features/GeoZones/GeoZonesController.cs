@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TrackMS.WebAPI.Features.Buildings.DTO;
+using TrackMS.WebAPI.Features.Buildings;
 using TrackMS.WebAPI.Features.GeoZones.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 using TrackMS.WebAPI.Shared.Models;
@@ -31,7 +33,14 @@ public class GeoZonesController : ControllerBase
         return await _geoZonesService.CreateGeoZoneAsync(createDto);
     }
 
-    [HttpPatch("id")]
+    [HttpGet("{id}", Name = "GetGeoZone")]
+    [Authorize(policy: PermissionKeys.CanReadGeoZone)]
+    public async Task<ActionResult<GetGeoZoneDto>> Get(string id)
+    {
+        return Ok(await _geoZonesService.GetGeoZoneByIdAsync(id));
+    }
+
+    [HttpPatch("{id}")]
     [Authorize(policy: PermissionKeys.CanUpdateGeoZone)]
     public async Task<ActionResult<GetGeoZoneDto>> Patch(string id, PatchGeoZoneDto patchDto)
     {

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.Exceptions;
+using TrackMS.WebAPI.Features.Buildings.DTO;
 using TrackMS.WebAPI.Features.GeoZones.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 using TrackMS.WebAPI.Shared.Extensions;
@@ -94,5 +95,20 @@ public class GeoZonesService
         {
             throw new NotFoundException();
         }
+    }
+
+    public async Task<GetGeoZoneDto> GetGeoZoneByIdAsync(string id, CancellationToken cancellationToken = default)
+    {
+        var geoZone = await _dbContext.GeoZones
+            .Where(x => x.Id == id)
+            .Select(x => _mapper.Map<GetGeoZoneDto>(x))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if(geoZone == null)
+        {
+            throw new NotFoundException();
+        }
+
+        return geoZone;
     }
 }

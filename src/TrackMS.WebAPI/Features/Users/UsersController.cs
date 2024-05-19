@@ -31,17 +31,17 @@ public class UsersController : ControllerBase
         return await _usersService.GetUsersPageAsync(getPageDto.PageSize, getPageDto.PageIndex);   
     }
 
-    [HttpGet("{userId}")]
+    [HttpGet("{id}")]
     [Authorize(policy: PermissionKeys.CanReadUser)]
-    public async Task<ActionResult<GetUserWithRolesDto>> GetUserById(string userId)
+    public async Task<ActionResult<GetUserWithRolesDto>> GetUserById(string id)
     {
-        return await _usersService.GetUserById(userId);
+        return await _usersService.GetUserById(id);
     }
 
-    [HttpPatch("{userId}")]
-    public async Task<ActionResult<GetUserWithRolesDto>> EditUserById(string userId, PatchUserDto dto)
+    [HttpPatch("{id}")]
+    public async Task<ActionResult<GetUserWithRolesDto>> EditUserById(string id, PatchUserDto dto)
     {
-        return await _usersService.EditUserByIdAsync(userId, dto);
+        return await _usersService.EditUserByIdAsync(id, dto);
     }
 
     [HttpDelete("{id}")]
