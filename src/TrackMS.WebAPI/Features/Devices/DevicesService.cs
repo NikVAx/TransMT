@@ -22,31 +22,31 @@ public class DevicesService
 
     public async Task<GetDeviceDto> CreateDeviceAsync(CreateDeviceDto createDto)
     {
-        var vehicle = new Device
+        var device = new Device
         {
-            Id = Guid.NewGuid().ToString(),
+            Id = createDto.DeviceId,
             VehicleId = createDto.VehicleId,
         };
 
-        _context.Devices.Add(vehicle);
+        _context.Devices.Add(device);
         await _context.SaveChangesAsync();
 
-        return _mapper.Map<GetDeviceDto>(vehicle);
+        return _mapper.Map<GetDeviceDto>(device);
     }
 
     public async Task<GetDeviceDto> GetDeviceByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        var vehicle = await _context.Devices
+        var device = await _context.Devices
             .Where(x => x.Id == id)
             .Select(x => _mapper.Map<GetDeviceDto>(x))
             .FirstOrDefaultAsync(cancellationToken);
 
-        if(vehicle == null)
+        if(device == null)
         {
             throw new NotFoundException();
         }
 
-        return vehicle;
+        return device;
     }
 
     public async Task<PageResponseDto<GetDeviceDto>> GetDevicesPageAsync(int pageSize, int pageIndex,
@@ -54,13 +54,13 @@ public class DevicesService
     {
         var count = await _context.Devices.CountAsync(cancellationToken);
 
-        var vehicles = await _context.Devices
+        var devices = await _context.Devices
             .OrderBy(x => x.Id)
             .GetPage(pageSize, pageIndex)
             .Select(x => _mapper.Map<GetDeviceDto>(x))
             .ToListAsync(cancellationToken);
 
-        return new PageResponseDto<GetDeviceDto>(vehicles, pageSize, pageIndex, count);
+        return new PageResponseDto<GetDeviceDto>(devices, pageSize, pageIndex, count);
     }
 
     public async Task DeleteDeviceByIdAsync(string id, CancellationToken cancellationToken = default)
@@ -91,24 +91,24 @@ public class DevicesService
     public async Task<GetDeviceDto> EditDeviceByIdAsync(string id, PatchDeviceDto patchDto,
         CancellationToken cancellationToken = default)
     {
-        var vehicle = await GetDeviceModelByIdAsync(id, cancellationToken);
+        var devices = await GetDeviceModelByIdAsync(id, cancellationToken);
 
-        _context.Update(vehicle);
+        _context.Update(devices);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<GetDeviceDto>(vehicle);
+        return _mapper.Map<GetDeviceDto>(devices);
     }
 
     public async Task<Device> GetDeviceModelByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        var vehicle = await _context.Devices
+        var device = await _context.Devices
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-        if(vehicle == null)
+        if(device == null)
         {
             throw new NotFoundException();
         }
 
-        return vehicle;
+        return device;
     }
 }

@@ -57,10 +57,14 @@ public class BuildingsService
         {
             Id = Guid.NewGuid().ToString(),
             Address = createDto.Address,
-            Location = createDto.Location,
+            Location = new NetTopologySuite.Geometries.Point(
+                createDto.Location.Lat,
+                createDto.Location.Lng),
             Type = createDto.Type,
             Name = createDto.Name
         };
+
+
 
         _context.Buildings.Add(building);
         await _context.SaveChangesAsync(cancellationToken);
@@ -104,7 +108,8 @@ public class BuildingsService
         }
 
         building.Address = patchDto.Address is null ? building.Address : patchDto.Address;
-        building.Location = patchDto.Location is null ? building.Location : patchDto.Location;
+        building.Location = patchDto.Location is null ? building.Location : 
+            new NetTopologySuite.Geometries.Point(patchDto.Location.Lat, patchDto.Location.Lng);
         building.Type = patchDto.Type is null ? building.Type : patchDto.Type;
         building.Name = patchDto.Name is null ? building.Name : patchDto.Name;
 
