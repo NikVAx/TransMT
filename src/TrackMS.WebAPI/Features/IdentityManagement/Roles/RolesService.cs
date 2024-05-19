@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.Exceptions;
+using TrackMS.WebAPI.Features.GeoZones.DTO;
 using TrackMS.WebAPI.Features.IdentityManagement.Roles.DTO;
 using TrackMS.WebAPI.Features.Roles.IdentityManagement.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 using TrackMS.WebAPI.Shared.Extensions;
+using TrackMS.WebAPI.Shared.Utils;
 
 namespace TrackMS.WebAPI.Features.IdentityManagement.Roles;
 
@@ -120,5 +123,32 @@ public class RolesService
         {
             throw new NotFoundException();
         }
+    }
+
+    public async Task<GetRoleDto> EditRoleByIdAsync(string id, PatchRoleDto patchDto)
+    {
+        var role = await _roleManager.Roles.FirstOrDefaultAsync(x => x.Id == id);
+
+        if(role == null)
+        {
+            throw new NotFoundException();
+        }
+
+        role.Name = patchDto.Name ?? role.Name;
+        role.Description = patchDto.Description ?? role.Description;
+        role.Permissions = patchDto.Permissions == null 
+            ? role.Permissions 
+            : _authDbContext.Permissions
+                .Where(x => patchDto.Permissions.Contains(x.Id))
+                .ToList();
+
+        var result = await _roleManager.UpdateAsync(role);
+
+        if (!result.Succeeded)
+        {
+            throw new Exception(string.Join(", ", result.Errors.Select(x => x.Description)));
+        }
+
+        return _mapper.Map<GetRoleDto>(role);
     }
 }
