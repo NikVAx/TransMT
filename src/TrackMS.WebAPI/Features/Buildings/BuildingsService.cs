@@ -58,8 +58,8 @@ public class BuildingsService
             Id = Guid.NewGuid().ToString(),
             Address = createDto.Address,
             Location = new NetTopologySuite.Geometries.Point(
-                createDto.Location.Lat,
-                createDto.Location.Lng),
+                createDto.Location.Lng,
+                createDto.Location.Lat),
             Type = createDto.Type,
             Name = createDto.Name
         };

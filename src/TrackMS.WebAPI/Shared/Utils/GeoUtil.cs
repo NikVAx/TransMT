@@ -8,8 +8,8 @@ public static class GeoUtil
     public static Polygon CreatePolygon(IEnumerable<GeoPoint> points)
     {
         var coordinates = points
-            .Select(x => new Coordinate(x.Lat, x.Lng))
-            .Append(new Coordinate(points.First().Lat, points.First().Lng))
+            .Select(x => new Coordinate(x.Lng, x.Lat))
+            .Append(new Coordinate(points.First().Lng, points.First().Lat))
             .ToArray();
 
         return Geometry.DefaultFactory.CreatePolygon(coordinates);

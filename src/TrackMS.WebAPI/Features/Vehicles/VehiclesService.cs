@@ -54,6 +54,7 @@ public class VehiclesService
     {
         var vehicle = await _context.Vehicles
             .Where(x => x.Id == id)
+            .Include(x => x.StorageArea)
             .Select(x => _mapper.Map<GetVehicleDto>(x))
             .FirstOrDefaultAsync(cancellationToken);
 

@@ -59,4 +59,14 @@ public class RolesController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPatch("{id}")]
+    [Authorize(policy: PermissionKeys.CanUpdateRole)]
+    public async Task<ActionResult<GetRoleDto>> Patch(string id, [FromBody] PatchRoleDto dto)
+    {
+        await _rolesService.EditRoleByIdAsync(id, dto);
+        
+        return Ok(await _rolesService.GetRoleByIdAsync(id));
+    }
+
 }
