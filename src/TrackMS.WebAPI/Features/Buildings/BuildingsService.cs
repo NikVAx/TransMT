@@ -109,7 +109,7 @@ public class BuildingsService
 
         building.Address = patchDto.Address is null ? building.Address : patchDto.Address;
         building.Location = patchDto.Location is null ? building.Location : 
-            new NetTopologySuite.Geometries.Point(patchDto.Location.Lat, patchDto.Location.Lng);
+            new NetTopologySuite.Geometries.Point(patchDto.Location.Lng, patchDto.Location.Lat);
         building.Type = patchDto.Type is null ? building.Type : patchDto.Type;
         building.Name = patchDto.Name is null ? building.Name : patchDto.Name;
 
