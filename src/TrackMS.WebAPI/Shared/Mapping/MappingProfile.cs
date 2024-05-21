@@ -44,9 +44,9 @@ public class MappingProfile : Profile
         CreateMap<GeoZone, GetGeoZoneDto>();
 
         CreateMap<GeoPoint, Point>()
-            .ConstructUsing(x => new Point(x.Lat, x.Lng));
+            .ConstructUsing(x => new Point(x.Lng, x.Lat));
         CreateMap<Point, GeoPoint>()
-            .ConstructUsing(x => new GeoPoint(x.X, x.Y));
+            .ConstructUsing(x => new GeoPoint(x.Y, x.X));
         CreateMap<Polygon, IEnumerable<GeoPoint>>()
             .ConstructUsing(x => x.Coordinates
                 .Select(c => new GeoPoint(c.X, c.Y))

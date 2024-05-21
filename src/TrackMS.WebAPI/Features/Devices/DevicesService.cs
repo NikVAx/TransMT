@@ -91,12 +91,15 @@ public class DevicesService
     public async Task<GetDeviceDto> EditDeviceByIdAsync(string id, PatchDeviceDto patchDto,
         CancellationToken cancellationToken = default)
     {
-        var devices = await GetDeviceModelByIdAsync(id, cancellationToken);
+        var device = await GetDeviceModelByIdAsync(id, cancellationToken);
+        
+        device.Id = patchDto.DeviceId;
+        device.VehicleId = patchDto.VehicleId;
 
-        _context.Update(devices);
+        _context.Update(device);
         await _context.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<GetDeviceDto>(devices);
+        return _mapper.Map<GetDeviceDto>(device);
     }
 
     public async Task<Device> GetDeviceModelByIdAsync(string id, CancellationToken cancellationToken = default)
