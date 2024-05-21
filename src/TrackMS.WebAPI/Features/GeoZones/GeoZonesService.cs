@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using TrackMS.Data;
 using TrackMS.Domain.Entities;
 using TrackMS.Domain.Exceptions;
-using TrackMS.WebAPI.Features.Buildings.DTO;
 using TrackMS.WebAPI.Features.GeoZones.DTO;
 using TrackMS.WebAPI.Shared.DTO;
 using TrackMS.WebAPI.Shared.Extensions;
@@ -43,6 +42,7 @@ public class GeoZonesService
             Color = createDto.Color,
             Name = createDto.Name,
             Points = GeoUtil.CreatePolygon(createDto.Points),
+            Type = createDto.Type,
         };
 
         _dbContext.Add(geoZone);
@@ -79,6 +79,7 @@ public class GeoZonesService
             GeoUtil.CreatePolygon(patchDto.Points);
 
         geoZone.Color = patchDto.Color ?? geoZone.Color;
+        geoZone.Type = patchDto.Type ?? geoZone.Type;
 
         await _dbContext.SaveChangesAsync();
 

@@ -49,7 +49,7 @@ public class MappingProfile : Profile
             .ConstructUsing(x => new GeoPoint(x.Y, x.X));
         CreateMap<Polygon, IEnumerable<GeoPoint>>()
             .ConstructUsing(x => x.Coordinates
-                .Select(c => new GeoPoint(c.X, c.Y))
+                .Select(c => new GeoPoint(c.Y, c.X))
                 .Take(x.Coordinates.Length - 1)
                 .ToList());
     }
