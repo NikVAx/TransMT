@@ -13,11 +13,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<VehicleOperator> VehicleOperators { get; set; }
     public DbSet<LocationStamp> LocationStamps { get; set; }
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-     
-    }
-
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -30,36 +26,31 @@ public class ApplicationDbContext : DbContext
         
         modelBuilder.Entity<Building>(building =>
         {
-            building.Property(y => y.Location)
-                    .HasColumnType("geography (point)");
-              
-            building.HasMany<Vehicle>()
-                    .WithOne(x => x.StorageArea)
-                    .HasForeignKey(x => x.StorageAreaId);
+            building.Property(y => y.Location).HasColumnType("geography (point)");
+            building.HasMany<Vehicle>().WithOne(x => x.StorageArea).HasForeignKey(x => x.StorageAreaId);
         });
 
         modelBuilder.Entity<LocationStamp>(locationStamp =>
         {
             locationStamp.HasKey(stamp => new { stamp.DeviceId, stamp.Timestamp });
+            locationStamp.HasIndex(stamp => stamp.VehicleId);
+            locationStamp.HasOne<Device>().WithMany().HasForeignKey(x => x.DeviceId);
+            locationStamp.HasOne<Vehicle>().WithMany().HasForeignKey(x => x.VehicleId);
+            locationStamp.HasOne<VehicleOperator>().WithMany().HasForeignKey(x => x.OperatorId);
         });
 
         modelBuilder.Entity<Device>(device =>
         {
-            device.HasOne<Vehicle>()
-                  .WithMany()
-                  .HasForeignKey(x => x.VehicleId);
-
-            device.HasMany<LocationStamp>()
-                  .WithOne()
-                  .HasForeignKey(x => x.DeviceId);
+            device.HasOne(x => x.Vehicle).WithMany().HasForeignKey(x => x.VehicleId);
+            device.HasMany<LocationStamp>().WithOne().HasForeignKey(x => x.DeviceId);
         });
 
         modelBuilder.Entity<GeoZone>(geoZone =>
         {
-            geoZone.Property(y => y.Points)
-                .HasColumnType("geography (polygon)");
+            geoZone.Property(y => y.Points).HasColumnType("geography (polygon)");
         });
 
         base.OnModelCreating(modelBuilder);
     }
 }
+
