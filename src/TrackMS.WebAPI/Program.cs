@@ -12,6 +12,7 @@ using TrackMS.WebAPI.Features.GeoZones;
 using TrackMS.WebAPI.Features.IdentityManagement.Permissions;
 using TrackMS.WebAPI.Features.IdentityManagement.Roles;
 using TrackMS.WebAPI.Features.Operators;
+using TrackMS.WebAPI.Features.Tracking;
 using TrackMS.WebAPI.Features.Users;
 using TrackMS.WebAPI.Features.Vehicles;
 using TrackMS.WebAPI.Filters;
@@ -109,6 +110,7 @@ public class Program
         builder.Services.AddCors();
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         .AddJwtBearer(options.JwtOptions);
+        builder.Services.AddSignalR();
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
@@ -116,11 +118,14 @@ public class Program
 
         var app = builder.Build();
 
+        app.MapHub<TrackingHub>("/hubs/tracking");
+
         app.UseCors(options =>
         {
             options.AllowAnyOrigin();
             options.AllowAnyMethod();
             options.AllowAnyHeader();
+            options.SetIsOriginAllowed(origin => true);
         });
 
         app.UseSwagger();

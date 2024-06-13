@@ -1,7 +1,7 @@
 ﻿
 namespace TrackMS.Domain.Interfaces;
 
-internal interface ILatLng
+public interface ILatLng
 {
     public double Lat { get; set; }
     public double Lng { get; set; }

@@ -11,10 +11,7 @@ public class AuthDbContext
     public DbSet<Session> Sessions { get; set; }
     public DbSet<Permission> Permissions { get; set; }
 
-    public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
-    {
-
-    }
+    public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options) { }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -39,7 +36,6 @@ public class AuthDbContext
             r.HasMany(x => x.Permissions).WithMany();
         });
 
-            
         base.OnModelCreating(builder);
     }
 }
