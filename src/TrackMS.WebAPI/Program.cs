@@ -122,10 +122,10 @@ public class Program
 
         app.UseCors(options =>
         {
-            options.AllowAnyOrigin();
             options.AllowAnyMethod();
             options.AllowAnyHeader();
             options.SetIsOriginAllowed(origin => true);
+            options.AllowCredentials();
         });
 
         app.UseSwagger();
