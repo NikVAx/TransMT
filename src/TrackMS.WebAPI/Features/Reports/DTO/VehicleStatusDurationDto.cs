@@ -2,7 +2,7 @@
 
 public class VehicleStatusDurationDto
 {
-    public string VehicleId { get; set; }
-    public string VehicleStatus { get; set; }
+    public string VehicleId { get; set; } = null!;
+    public string VehicleStatus { get; set; } = null!;
     public long TotalDuration { get; set; }
 }

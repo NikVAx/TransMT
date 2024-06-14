@@ -4,10 +4,10 @@ namespace TrackMS.WebAPI.Features.GeoZones.DTO;
 
 public class GetGeoZoneDto
 {
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string Color { get; set; }
-    public string Type { get; set; }
+    public string Id { get; set; } = null!;
+    public string Name { get; set; } = null!;
+    public string Color { get; set; } = null!;
+    public string Type { get; set; } = null!;
 
-    public ICollection<GeoPoint> Points { get; set; }
+    public ICollection<GeoPoint> Points { get; set; } = new List<GeoPoint>();
 }

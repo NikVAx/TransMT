@@ -2,6 +2,6 @@
 
 public class GetDeviceDto
 {
-    public string Id { get; set; }
-    public string VehicleId { get; set; }
+    public string Id { get; set; } = null!;
+    public string VehicleId { get; set; } = null!;
 }
