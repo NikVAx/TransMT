@@ -61,6 +61,7 @@ public class ReportsController : ControllerBase
                 WITH grouped AS (
                  SELECT 
                    ""DeviceId"", 
+                   ""VehicleId"", 
                    ""Timestamp"", 
                    ""VehicleStatus"", 
                    LAG(""Timestamp"") OVER (
@@ -75,7 +76,8 @@ public class ReportsController : ControllerBase
                 ), 
                 intervals AS (
                   SELECT 
-                    ""DeviceId"", 
+                    ""DeviceId"",
+                    ""VehicleId"", 
                     ""Timestamp"", 
                     ""VehicleStatus"", 
                     prev_timestamp, 
@@ -87,6 +89,7 @@ public class ReportsController : ControllerBase
                 grouped_with_ids AS (
                   SELECT 
                     ""DeviceId"", 
+                    ""VehicleId"", 
                     ""Timestamp"", 
                     ""VehicleStatus"", 
                     SUM(new_group) OVER (
@@ -99,11 +102,17 @@ public class ReportsController : ControllerBase
                 )
                 SELECT
                   ""DeviceId"",
+                  ""VehicleId"",
+                  ""VehicleType"",
+                  ""VehicleNumber"",
                   ""VehicleStatus"" as ""Status"",
                   Sum(""Duration"") as ""Duration""
                 FROM (
                 	SELECT 
                 	  ""DeviceId"", 
+                      ""VehicleId"",
+                      ""Vehicles"".""Type"" as ""VehicleType"", 
+                      ""Vehicles"".""Number"" as ""VehicleNumber"", 
                 	  ""VehicleStatus"", 
                 	  EXTRACT(
                 		EPOCH 
@@ -117,6 +126,9 @@ public class ReportsController : ControllerBase
                 	  ) AS ""Duration""
                 	FROM 
                 	  grouped_with_ids 
+                    LEFT JOIN
+                      ""Vehicles""
+                    ON ""Vehicles"".""Id"" = ""VehicleId""
                 	ORDER BY 
                 	  ""DeviceId"", 
                 	  group_id, 
@@ -124,14 +136,26 @@ public class ReportsController : ControllerBase
                 	) as data
                 GROUP BY 
                     ""DeviceId"", 
-                    ""VehicleStatus""
+                    ""VehicleStatus"",
+                    ""VehicleId"",
+                    ""VehicleType"",
+                    ""VehicleNumber""
                 ", fromParam, toParam).ToListAsync();
 
         var grouped = selected.AsEnumerable()
-            .GroupBy(x => x.DeviceId)
+            .GroupBy(x => new
+            {
+                x.DeviceId,
+                x.VehicleType,
+                x.VehicleNumber,
+                x.VehicleId
+            })
             .Select(x => new ReportDataGroupedByDeviceDto
             {
-                DeviceId = x.Key,
+                DeviceId = x.Key.DeviceId,
+                VehicleType = x.Key.VehicleType,
+                VehicleId = x.Key.VehicleId,
+                VehicleNumber = x.Key.VehicleNumber,
                 Statuses = x.Select(y => new StatusDuration
                 {
                     Duration = y.Duration,
