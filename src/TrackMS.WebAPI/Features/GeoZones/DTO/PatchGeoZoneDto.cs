@@ -6,7 +6,7 @@ public class PatchGeoZoneDto
 {
     public string? Name { get; set; }
     public string? Color { get; set; }
-    public string Type { get; set; }
+    public string Type { get; set; } = null!;
 
     public ICollection<GeoPoint>? Points { get; set; }
 }

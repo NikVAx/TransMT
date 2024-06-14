@@ -23,7 +23,7 @@ public enum LimitType
 public class SetDriveLimitsDto : ILatLng
 {
     public LimitType Limit { get; set; }
-    public string DeviceId { get; set; }
+    public string DeviceId { get; set; } = null!;
     public double Lat { get ; set; }
     public double Lng { get; set; }
 }
@@ -83,6 +83,11 @@ public class TrackingController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> PostGpsData(CreateGpsDataDto data)
     {
+        if (data.Status == "Нет")
+        {
+            return BadRequest();
+        }
+
         var device = await _context.Devices
             .FirstOrDefaultAsync(x => x.Id.Equals(data.DeviceId));
 
