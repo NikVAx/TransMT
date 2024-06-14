@@ -32,11 +32,6 @@ public class DomainExceptionFilterAttribute
                     });
                 context.ExceptionHandled = true;
                 break;
-
-            //default:
-            //    context.Result = new ObjectResult(context.Exception);
-            //    break;
-
         }
     }
 }
