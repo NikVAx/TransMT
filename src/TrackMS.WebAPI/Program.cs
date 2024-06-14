@@ -118,6 +118,8 @@ public class Program
 
         var app = builder.Build();
 
+        app.UseDeveloperExceptionPage();
+
         app.MapHub<TrackingHub>("/hubs/tracking");
 
         app.UseCors(options =>
