@@ -312,6 +312,11 @@ public class ReportsController : ControllerBase
                 Name = byGeoZone.Key.Name,
                 Type = byGeoZone.Key.Type,
                 Duration = byGeoZone.Sum(x => x.TotalDuration),
+                Statuses = byGeoZone.GroupBy(row => row.VehicleStatus).Select(byStatus => new StatusDuration
+                {
+                    Status = byStatus.Key,
+                    Duration = byStatus.Sum(x =>x.TotalDuration),
+                }),
                 Vehicles = byGeoZone.GroupBy(row => new
                 {
                     Id = row.VehicleId,
